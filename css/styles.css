@@ -1,0 +1,110 @@
+body {
+	margin: 0;
+	background-color: #333333;
+	font-family: 'Ubuntu', sans-serif;
+}
+
+.container {
+	margin: 0 20%;
+}
+
+.shadow {
+	box-shadow: 0 0 10px 0 rgba(0,0,0,.25);
+}
+
+.clearfix:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+#header {
+	height: 64px;
+	width: 100%;
+	background-color: #222222;
+}
+
+#header-title {
+	color: #EEEEEE;
+	font-size: 36px;
+	font-weight: bold;
+	padding: 10px;
+	cursor: pointer;
+}
+
+.vod-entry {
+	width: 30%;
+	float: left;
+	margin: 1.5%;
+	cursor: pointer;
+}
+
+.vod-entry .image-container {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.vod-entry img {
+	width: 100%;
+	object-fit: cover;
+	margin-top: -9.5%;
+	margin-bottom: -9.5%;
+}
+
+.vod-entry .overlay-container {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	right: 5px;
+}
+
+.overlay-container .views {
+	float: left;
+}
+
+.overlay-container .length {
+	float: right;
+}
+
+.overlay-container div {
+	background-color: rgba(0, 0, 0, 0.6);
+	border-radius: 3px;
+	padding: 5px;
+	color: white;
+}
+
+.game-overlay {
+	position: absolute;
+	bottom: 5px;
+	right: 5px;
+	background-color: rgba(0, 0, 0, 0.6);
+	border-radius: 3px;
+	padding: 5px;
+	color: white;
+}
+
+.info-container {
+	width: 100%;
+	background-color: #BBBBBB;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.info-container .title {
+	float: left;
+	padding: 15px 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.info-container .date {
+	float: right;
+	padding: 15px 10px;
+}
+
+#player {
+	display: none;
+}
