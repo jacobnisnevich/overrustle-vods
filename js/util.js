@@ -30,7 +30,7 @@ var getUrlParameter = function(sParam) {
 };
 
 var formatLength = function(seconds) {
-    var time = Number(seconds);
+    var time = Math.floor(Number(seconds));
     var minutesTotal = Math.floor(time / 60);
     var seconds = time - minutesTotal * 60;
     var minutes = minutesTotal % 60

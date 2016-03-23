@@ -1,4 +1,9 @@
+html {
+	height: 100%
+}
+
 body {
+	height: 100%;
 	margin: 0;
 	background-color: #333333;
 	font-family: 'Ubuntu', sans-serif;
@@ -30,6 +35,10 @@ body {
 	font-weight: bold;
 	padding: 10px;
 	cursor: pointer;
+}
+
+#body {
+	height: 100%;
 }
 
 .vod-entry {
@@ -107,4 +116,19 @@ body {
 
 #player {
 	display: none;
+	height: 100%;
+}
+
+#video-player {
+	height: 100%;
+}
+
+#video-player iframe {
+	height: -moz-calc(100% - 64px);
+	height: -webkit-calc(100% - 64px);
+	height: calc(100% - 64px);
+
+	width: -moz-calc(100% - 390px);
+	width: -webkit-calc(100% - 390px);
+	width: calc(100% - 390px);
 }

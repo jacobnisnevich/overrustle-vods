@@ -25,13 +25,17 @@ var loadBrowser = function() {
 }
 
 var loadPlayer = function(id) {
+    $("#player").show();
+
     var options = {
-        width: screen.width - 390,
-        height: screen.height,
+    //    width: $("body").width() - 390,
+    //    height: $("body").height() - 64,
         channel: "destiny", 
         video: id
     };
     var player = new Twitch.Player("video-player", options);
+
+    $("body").css("overflow", "hidden");
 }
 
 var createVodEntries = function(vodData) {
