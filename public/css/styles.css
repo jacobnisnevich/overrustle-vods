@@ -121,14 +121,33 @@ body {
 
 #video-player {
 	height: 100%;
+	width: -moz-calc(100% - 390px);
+	width: -webkit-calc(100% - 390px);
+	width: calc(100% - 390px);
+	float: left;
 }
 
 #video-player iframe {
 	height: -moz-calc(100% - 64px);
 	height: -webkit-calc(100% - 64px);
 	height: calc(100% - 64px);
+	width: 100%;
+}
 
-	width: -moz-calc(100% - 390px);
-	width: -webkit-calc(100% - 390px);
-	width: calc(100% - 390px);
+#chat-stream {
+    height: calc(100% - 64px);
+    width: 390px;
+	float: right;
+	padding: 10px;
+	color: #EEEEEE;
+	box-sizing: border-box;
+	overflow-y: scroll;
+}
+
+.chat-line {
+	margin-bottom: 10px;
+}
+
+.chat-line .username {
+	color: #AAAAAA;
 }

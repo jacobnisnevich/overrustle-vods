@@ -8,7 +8,7 @@ $(document).ready(function() {
     }
 
     $("#header-title").click(function() {
-        window.location = "index.html";
+        window.location = "/";
     });
 
     $("body").on("click", ".vod-entry", function() {
@@ -28,12 +28,19 @@ var loadPlayer = function(id) {
     $("#player").show();
 
     var options = {
-    //    width: $("body").width() - 390,
-    //    height: $("body").height() - 64,
-        channel: "destiny", 
         video: id
     };
     var player = new Twitch.Player("video-player", options);
+
+    var chat = new Chat(id);
+
+    player.addEventListener("play", function() {
+        chat.startChatStream();
+    });
+
+    player.addEventListener("pause", function() {
+        chat.pauseChatStream();
+    });
 
     $("body").css("overflow", "hidden");
 }
