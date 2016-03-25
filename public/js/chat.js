@@ -1,8 +1,8 @@
 var Chat = function(id) {
 	this.videoId = id;
 	this.status = "loading";
-
 	self = this;
+
 	$.get("https://api.twitch.tv/kraken/videos/" + id, function(vodData) {
 		self.recordedTime = moment(vodData.recorded_at).utc();
 		self.currentTime = self.recordedTime;
@@ -32,6 +32,24 @@ var Chat = function(id) {
 		this.status = "paused";
 	};
 
+	this._insertEmoticon = function(message) {
+		var messageReplaced = message;
+
+		globals.destinyEmotes.forEach(function(emote) {
+			messageReplaced = messageReplaced.replace(emote, self._generateEmoteImage(emote));
+		});
+
+		globals.twitchEmotes.forEach(function(emote) {
+			messageReplaced = messageReplaced.replace(emote, self._generateEmoteImage(emote));
+		});
+
+		return messageReplaced;
+	};
+
+	this._generateEmoteImage = function(emote) {
+		return "<img src='../emoticons/" + emote + ".png' />";
+	};
+
 	window.setInterval(function() {
 		if (self.status == "running" && self.chat) {
 			var utcFormat = self.currentTime.format().replace("+00:00", "Z");
@@ -41,7 +59,7 @@ var Chat = function(id) {
 						"<span class='username'>" + 
 						chatLine.username + "</span>: " + 
 						"<span class='message'>" + 
-						chatLine.message + "</span></div>");
+						self._insertEmoticon(chatLine.message) + "</span></div>");
 				});
 
 				$("#chat-stream").animate({ 

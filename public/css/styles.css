@@ -138,14 +138,16 @@ body {
     height: calc(100% - 64px);
     width: 390px;
 	float: right;
+	font-size: 13px;
 	padding: 10px;
 	color: #EEEEEE;
-	box-sizing: border-box;
 	overflow-y: scroll;
+	box-sizing: border-box;
 }
 
 .chat-line {
 	margin-bottom: 10px;
+	word-wrap: break-word;
 }
 
 .chat-line .username {
