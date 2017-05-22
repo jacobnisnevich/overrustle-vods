@@ -1,11 +1,41 @@
 $(document).ready(function() {
     var id = getUrlParameter("id");
+    var page = 1;
 
     if (id) {
         loadPlayer(id);
     } else {
-        loadBrowser();
+        loadVODs(page);
     }
+
+    $("#next-page-button").click(function() {
+        page += 1;
+        $("#page-number").text(page);
+        loadVODs(page);
+
+        if (page === 1) {
+            $("#previous-page-button").addClass("disabled");
+        } else {
+            $("#previous-page-button").removeClass("disabled");
+        }
+    });
+
+    $("#previous-page-button").click(function() {
+        if (page > 1) { 
+            page -= 1;
+            $("#page-number").text(page);
+            loadVODs(page);
+        }
+
+        if (page === 1) {
+            $("#previous-page-button").addClass("disabled");
+        } else {
+            $("#previous-page-button").removeClass("disabled");
+        }
+    });
+
+    // Check if Destiny is online every 5 minutes
+    setInterval(loadDestinyStatus(), 300000);
 
     $(".tooltip").tooltipster();
 
@@ -18,12 +48,28 @@ $(document).ready(function() {
     });
 });
 
-var loadBrowser = function() {
-    var destinyVodsUrl = "https://api.twitch.tv/kraken/channels/destiny/videos?limit=9&broadcasts=true&client_id=88bxd2ntyahw9s8ponrq2nwluxx17q";
+var loadVODs = function(page) {
+    var destinyVodsUrl = "https://api.twitch.tv/kraken/channels/destiny/videos?limit=9&offset=" + (page - 1) * 9 + 
+                         "&broadcasts=true&client_id=88bxd2ntyahw9s8ponrq2nwluxx17q";
 
     $.get(destinyVodsUrl, function(data) {
+        $("#vod-list").empty();
         createVodEntries(data);
     });
+}
+
+var loadDestinyStatus = function() {
+    var destinyStatusUrl = "https://api.twitch.tv/kraken/streams/destiny?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q";
+
+    $.get(destinyStatusUrl, function(data) {
+        if (data.stream === null) {
+            $("#destiny-status").text("Destiny is offline.");
+            $("#destiny-status").css("color", "#a70000");
+        } else {
+            $("#destiny-status").text("Destiny is LIVE!");
+            $("#destiny-status").css("color", "#01f335");            
+        }
+    })
 }
 
 var loadPlayer = function(id) {

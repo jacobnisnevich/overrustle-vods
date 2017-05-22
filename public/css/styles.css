@@ -64,9 +64,36 @@ body {
 	color: white;
 }
 
-#body {
-	height: 100%;
+/* Page Selector */
+
+#page-selector {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 20px;
 }
+
+#previous-page-button, #next-page-button {
+	padding: 10px 30px;
+	background-color: #CCC;
+	border-radius: 3px;
+	box-shadow: -5px 5px 10px #222;
+	cursor: pointer;
+}
+
+#previous-page-button.disabled, #next-page-button.disabled {
+	padding: 10px 30px;
+	background-color: #888;
+	border-radius: 3px;
+	box-shadow: -1px 1px 8px #222;
+	cursor: auto;
+}
+
+#page-number-container {
+	color: white;
+}
+
+/* VOD Browser */
 
 .vod-entry {
 	width: 30%;
