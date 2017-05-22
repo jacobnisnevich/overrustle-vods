@@ -4,8 +4,12 @@ $(document).ready(function() {
 
     if (id) {
         loadPlayer(id);
+        $("#browse").hide();
+        $("#player").show();
     } else {
         loadVODs(page);
+        $("#player").hide();
+        $("#browse").show();
     }
 
     $("#next-page-button").click(function() {

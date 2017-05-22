@@ -93,6 +93,10 @@ body {
 	color: white;
 }
 
+#body {
+	height: 100%;
+}
+
 /* VOD Browser */
 
 .vod-entry {
