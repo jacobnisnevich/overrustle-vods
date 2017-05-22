@@ -1,6 +1,6 @@
 # OverRustle VODs
 
-**OverRustle VODs** is a simple web app that plays Destiny Twitch VODs with the destiny.gg/OverRustle chat along the side in real-time. It supports pausing and resuming the chat stream when the Twitch VOD is paused but currently does not support seeking and probably won't work if the chat for the VOD spans two days.
+**OverRustle VODs** is a simple web app that plays Destiny Twitch VODs with the destiny.gg/OverRustle chat along the side in real-time. Synchronized seeking between the VOD and the chat is currently not supported and it currently won't work if the chat for the VOD spans two days.
 
 ## Running the Project
 
