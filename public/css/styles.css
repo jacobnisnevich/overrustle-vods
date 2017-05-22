@@ -27,13 +27,41 @@ body {
 	height: 72px;
 	width: 100%;
 	background-color: #222222;
+	display: flex;
+	justify-content: space-between;
 }
 
 #header-title {
-	color: #EEEEEE;
+	color: #DDD;
 	font-size: 36px;
 	padding: 15px;
 	cursor: pointer;
+}
+
+#header-title:hover {
+	color: white;
+}
+
+#header-links {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	color: white;
+	font-size: 20px;
+}
+
+#header-links div {
+	margin-right: 24px;
+}
+
+#header-links div a {
+	color: #CCC;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+#header-links div a:hover {
+	color: white;
 }
 
 #body {
@@ -69,14 +97,6 @@ body {
 	right: 5px;
 	display: flex;
 	justify-content: space-between;
-}
-
-.overlay-container .views {
-
-}
-
-.overlay-container .length {
-
 }
 
 .overlay-container div {

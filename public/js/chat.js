@@ -27,14 +27,10 @@ var Chat = function(id) {
 
 	$("#play-button").click(function() {
 		self.startChatStream();
-		$("#play-button").hide();
-		$("#stop-button").show();
 	});
 
 	$("#stop-button").click(function() {
 		self.pauseChatStream();
-		$("#stop-button").hide();
-		$("#play-button").show();
 	});
 
 	$("#skip-view-button").click(function() {
@@ -59,15 +55,19 @@ var Chat = function(id) {
 	});
 
 	this.startChatStream = function() {
+		$("#play-button").hide();
+		$("#stop-button").show();
 		this.status = "running";
 	};
 
 	this.pauseChatStream = function() {
+		$("#stop-button").hide();
+		$("#play-button").show();
 		this.status = "paused";
 	};
 
 	this._skipToTime = function(timeString) {
-		var timeValues = timeString.match(/(..):(..):(..)/);
+		var timeValues = timeString.match(/(.*):(.*):(.*)/);
 
 		if (timeValues === null) {
 			return false;
@@ -117,7 +117,7 @@ var Chat = function(id) {
 	this._formatTime = function(milliseconds) {
 		var secondsTotal = milliseconds / 1000;
 		var hours = Math.floor(secondsTotal / 3600)
-		var minutes = Math.floor((secondsTotal - hours * 60) / 60);
+		var minutes = Math.floor((secondsTotal - hours * 3600) / 60);
 		var seconds = secondsTotal % 60;
 
 		return this._formatTimeNumber(hours) + ":" + 
