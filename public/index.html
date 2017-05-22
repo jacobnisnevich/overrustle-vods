@@ -5,13 +5,16 @@
 	<title>OverRustle VODs</title>
 
 	<link rel="stylesheet" href="octicons/octicons.css">
+	<link rel="stylesheet" href="css/tooltipster.bundle.min.css" />
 	<link rel="stylesheet" href="css/styles.css"/>
 
 	<link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
 
 	<script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 	<script src="js/lib/moment.min.js"></script>
 	<script src="js/lib/jquery-2.1.4.min.js"></script>
+	<script src="js/lib/tooltipster.bundle.min.js"></script>
 	<script src="js/lib/jquery.tmpl.min.js"></script>
 
 	<script src="js/globals.js"></script>
@@ -24,13 +27,13 @@
 		<div id="${id}" class="vod-entry shadow">
 			<div class="image-container">
 				<img src="${image}"/>
-				<div class="overlay-container clearfix">
+				<div class="overlay-container">
 					<div class="views"><span class="octicon octicon-eye"></span>&nbsp;${views}</div>
 					<div class="length"><span class="octicon octicon-watch"></span>&nbsp;${length}</div>
 				</div>
 				<div class="game-overlay">${game}</div>
 			</div>
-			<div class="info-container clearfix">
+			<div class="info-container">
 				<div class="title">${title}</div>
 				<div class="date">${date}</div>
 			</div>
@@ -45,9 +48,24 @@
 		<div id="browse" class="view container">
 			<div id="vod-list"></div>
 		</div>
-		<div id="player" class="view clearfix">
+		<div id="player" class="view">
 			<div id="video-player"></div>
-			<div id="chat-stream"></div>
+			<div id="chat-container">
+				<div id="chat-stream"></div>
+				<div id="chat-controls">
+					<div id="non-skip-controls">
+						<span title="Play" id="play-button" class="octicon octicon-triangle-right tooltip"></span>
+						<span title="Stop" id="stop-button" class="octicon octicon-primitive-square tooltip"></span>
+						<span class="tooltip" title="Chat Time" id="chat-time">00:00:00</span>
+						<span title="Skip to Time" id="skip-view-button" class="octicon octicon-chevron-right tooltip"></span>
+					</div>
+					<div id="skip-controls">
+						<span title="Back" id="back-button" class="octicon octicon-arrow-left tooltip"></span>
+						<input type="text" id="skip-time-input" placeholder="00:00:00" />
+						<span title="Skip to Time" id="skip-button" class="octicon octicon-chevron-right tooltip"></span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 

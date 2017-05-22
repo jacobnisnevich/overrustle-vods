@@ -7,6 +7,8 @@ $(document).ready(function() {
         loadBrowser();
     }
 
+    $(".tooltip").tooltipster();
+
     $("#header-title").click(function() {
         window.location = "/";
     });
@@ -17,7 +19,7 @@ $(document).ready(function() {
 });
 
 var loadBrowser = function() {
-    var destinyVodsUrl = "https://api.twitch.tv/kraken/channels/destiny/videos?limit=9&broadcasts=true";
+    var destinyVodsUrl = "https://api.twitch.tv/kraken/channels/destiny/videos?limit=9&broadcasts=true&client_id=88bxd2ntyahw9s8ponrq2nwluxx17q";
 
     $.get(destinyVodsUrl, function(data) {
         createVodEntries(data);
@@ -25,13 +27,9 @@ var loadBrowser = function() {
 }
 
 var loadPlayer = function(id) {
-    $("#player").show();
+    $("#player").css("display", "flex");
 
-    var options = {
-        video: id
-    };
-    var player = new Twitch.Player("video-player", options);
-
+    var player = new Twitch.Player("video-player", { video: id });
     var chat = new Chat(id);
 
     player.addEventListener("play", function() {

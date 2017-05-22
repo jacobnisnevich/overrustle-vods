@@ -6,8 +6,10 @@ class OverRustleLogsParser
   end
 
   def get_chat
-    chat_array = @page.css('.text').text.split("\n")
+    chat_array = @page.text.split("\n")
     chat_hash = {}
+
+    p chat_array[0]
 
     chat_array.each do |chat_line|
       index = chat_line.index(': ')
