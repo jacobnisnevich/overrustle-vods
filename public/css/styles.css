@@ -200,9 +200,9 @@ body {
 }
 
 #chat-stream {
-	height: -moz-calc(100% - 48px);
-	height: -webkit-calc(100% - 48px);
-	height: calc(100% - 48px);
+	height: -moz-calc(100%);
+	height: -webkit-calc(100%);
+	height: calc(100%);
 	font-size: 13px;
 	padding: 10px;
 	color: #EEEEEE;
@@ -267,51 +267,6 @@ body {
 .skip-message {
 	background-color: #222;
 	padding: 10px;
-}
-
-/* Chat Controls */
-
-#chat-controls {
-	height: 48px;
-}
-
-#non-skip-controls {
-	height: 100%;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	color: white;
-}
-
-#skip-controls {
-	height: 100%;
-	display: none;
-	justify-content: space-around;
-	align-items: center;
-	color: white;
-}
-
-#skip-time-input {
-	height: 24px;
-	width: 100px;
-	text-align: center;
-	font-family: 'Ubuntu Mono', monospace;
-}
-
-#chat-controls .octicon {
-	font-size: 32px;
-}
-
-#play-button {
-	display: none;
-}
-
-#play-button, #stop-button, #skip-view-button, #back-button, #skip-button {
-	cursor: pointer;
-} 
-
-#chat-time {
-	font-family: 'Ubuntu Mono', monospace;
 }
 
 /* Scroll Bar Style */
