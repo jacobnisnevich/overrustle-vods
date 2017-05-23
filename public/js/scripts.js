@@ -80,7 +80,7 @@ var loadPlayer = function(id) {
     $("#player").css("display", "flex");
 
     var player = new Twitch.Player("video-player", { video: id });
-    var chat = new Chat(id);
+    var chat = new Chat(id, player);
 
     player.addEventListener("play", function() {
         chat.startChatStream();
