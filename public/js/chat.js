@@ -10,7 +10,6 @@ var Chat = function(id, player) {
 
 	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
 		self.recordedTime = moment(vodData.recorded_at).utc();
-		self.currentTime = self.recordedTime.clone();
 
 		// http://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
 		var overrustleLogsUrl = "http://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
@@ -28,61 +27,12 @@ var Chat = function(id, player) {
 		});
 	});
 
-	$("#play-button").click(function() {
-		self.startChatStream();
-	});
-
-	$("#stop-button").click(function() {
-		self.pauseChatStream();
-	});
-
-	$("#skip-view-button").click(function() {
-		self.skipView = true;
-		$("#non-skip-controls").hide();
-		$("#skip-controls").css("display", "flex");
-		$("#skip-time-input").focus().select();
-	});
-
-	$("#back-button").click(function() {
-		self.skipView = false;
-		$("#skip-controls").hide();
-		$("#non-skip-controls").css("display", "flex");
-	});
-
-	$("#skip-button").click(function() {
-		if (self._skipToTime($("#skip-time-input").val())) {
-			self.skipView = false;
-			$("#skip-controls").hide();
-			$("#non-skip-controls").css("display", "flex");
-		}
-	});
-
 	this.startChatStream = function() {
-		$("#play-button").hide();
-		$("#stop-button").show();
 		this.status = "running";
 	};
 
 	this.pauseChatStream = function() {
-		$("#stop-button").hide();
-		$("#play-button").show();
 		this.status = "paused";
-	};
-
-	this._skipToTime = function(timeString) {
-		var timeValues = timeString.match(/(.*):(.*):(.*)/);
-
-		if (timeValues === null) {
-			return false;
-		}
-
-		self.currentTime = self.recordedTime.clone()
-												.add(timeValues[1], 'h')
-												.add(timeValues[2], 'm')
-												.add(timeValues[3], 's');
-		$("#chat-stream").append("<div class='skip-message'>Skipping to " + timeString + "...</div>");
-
-		return true;
 	};
 
 	this._formatMessage = function(message) {
@@ -130,7 +80,6 @@ var Chat = function(id, player) {
 
 	window.setInterval(function() {
 		if (self.status == "running" && self.chat) {
-			//var utcFormat = self.currentTime.format().replace("+00:00", "Z");
 			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
 			var utcFormat = self.recordedTime.clone().add(self.chatDelay + currentTimeOffset, 's').format().replace("+00:00", "Z");
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
@@ -138,7 +87,8 @@ var Chat = function(id, player) {
 					$("#chat-stream").append("<div class='chat-line'>" + 
 						"<span class='username'>" + 
 						chatLine.username + "</span>: " + 
-						"<span class='message'>"+ self._formatMessage(chatLine.message) + "</span></div>");
+						"<span class='message'>" +
+					        self._formatMessage(chatLine.message) + "</span></div>");
 				});
 
 				$("#chat-stream").animate({ 
