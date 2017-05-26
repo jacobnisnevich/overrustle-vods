@@ -12,15 +12,19 @@ var Chat = function(id, player) {
 		self.recordedTime = moment(vodData.recorded_at).utc();
 
 		// http://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
-		var overrustleLogsUrl = "http://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
+		var overrustleLogsMonth = "http://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
 			self.recordedTime.format("MMMM") + "%20" + 
 			self.recordedTime.format("YYYY") + "/" + 
 			self.recordedTime.format("YYYY") + "-" +
-			self.recordedTime.format("MM") + "-" +
-			self.recordedTime.format("DD") + ".txt";
+			self.recordedTime.format("MM") + "-";
 
+		var overrustleLogsDates = [
+			overrustleLogsMonth + self.recordedTime.format("DD") + ".txt",
+			overrustleLogsMonth + self.recordedTime.clone().add(1, 'days').format("DD") + ".txt"
+		];
+			
 		$.get("/chat", {
-			url: overrustleLogsUrl
+			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {
 			self.chat = JSON.parse(data);
 			self.startChatStream();
