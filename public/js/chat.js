@@ -6,6 +6,9 @@ var Chat = function(id, player) {
 	this.chatDelay = 8;
 	this.previousTimeOffset = -1;
 
+	this.previousMessage = '';
+	this.comboCount = 1;
+
 	var self = this;
 
 	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
@@ -43,16 +46,33 @@ var Chat = function(id, player) {
 		var messageReplaced = message.linkify();
 
 		Object.keys(globals.destinyEmotes).forEach(function(emote) {
-			messageReplaced = messageReplaced.replace(emote, self._generateDestinyEmoteImage(emote));
+			messageReplaced = messageReplaced.split(emote).join(self._generateDestinyEmoteImage(emote));
 		});
 
 		return this._greenTextify(messageReplaced);
 	};
 
+	this._renderComboMessage = function(emote, comboCount) {
+		return self._generateDestinyEmoteImage(emote) + "<span class='x'>x" + comboCount + "</span> C-C-COMBO";
+	}
+
+	this._renderChatMessage = function(username, message) {
+		var usernameField = "";
+		if (username) {
+			usernameField =  "<span class='username .user-" + username + "'>" + username + "</span>: ";
+		}
+
+		$("#chat-stream").append("<div class='chat-line'>" + 
+			usernameField + 
+			"<span class='message'>" +
+		  message + "</span></div>");		
+	}
+
 	this._generateDestinyEmoteImage = function(emote) {
 		var styles = globals.destinyEmotes[emote];
 
 		return "<div class='emote emote-" + emote + "' " + 
+			"title='" + emote + "'" +
 			"style='background-position: " + styles.backgroundPosition + "; " + 
 			"width: " + styles.width + "; " + 
 			"height: " + styles.height + "; " + 
@@ -86,13 +106,21 @@ var Chat = function(id, player) {
 		if (self.status == "running" && self.chat) {
 			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
 			var utcFormat = self.recordedTime.clone().add(self.chatDelay + currentTimeOffset, 's').format().replace("+00:00", "Z");
+			
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
 				self.chat[utcFormat].forEach(function(chatLine) {
-					$("#chat-stream").append("<div class='chat-line'>" + 
-						"<span class='username'>" + 
-						chatLine.username + "</span>: " + 
-						"<span class='message'>" +
-					        self._formatMessage(chatLine.message) + "</span></div>");
+					if (self.previousMessage == chatLine.message && globals.destinyEmotes[self.previousMessage]) {
+						self.comboCount++;
+
+						$('#chat-stream .chat-line').last().remove();
+						var comboMessage = self._renderComboMessage(self.previousMessage, self.comboCount);
+						self._renderChatMessage(null, comboMessage);
+					} else {
+						self.comboCount = 1;
+						self._renderChatMessage(chatLine.username, self._formatMessage(chatLine.message));
+					}
+
+					self.previousMessage = chatLine.message;
 				});
 
 				$("#chat-stream").animate({ 
@@ -105,6 +133,7 @@ var Chat = function(id, player) {
 	}, 1000);
 };
 
+// From https://stackoverflow.com/a/3890175
 String.prototype.linkify = function() {
 	// http://, https://, ftp://
 	var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;

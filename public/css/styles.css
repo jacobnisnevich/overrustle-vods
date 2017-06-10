@@ -269,6 +269,12 @@ body {
 	padding: 10px;
 }
 
+.x {
+	font-weight: bold;
+	font-size: 14px;
+	color: white;
+}
+
 /* Scroll Bar Style */
 
 ::-webkit-scrollbar-track

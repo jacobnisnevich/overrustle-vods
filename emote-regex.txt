@@ -1,3 +1,3 @@
-\.chat\-emote\.chat\-emote\-(.*) {\n.*background-position: (.*);\n.*width: (.*);\n.*height: (.*);\n.*margin-top: (.*)\n}
+\.chat\-emote\.chat\-emote\-(.*){\n.*background-position:(.*);\n.*width:(.*);\n.*height:(.*);\n.*margin-top:(.*)\n}\n
 
-'$1': {backgroundPosition: '$2', width: '$3', height: '$4', marginTop: '$5'}
+'$1': {backgroundPosition: '$2', width: '$3', height: '$4', marginTop: '$5'},
