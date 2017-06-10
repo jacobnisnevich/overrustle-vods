@@ -5,7 +5,12 @@ class OverRustleLogsParser
     @pages = []
 
     urls.each do |url|
-      @pages.push Nokogiri::HTML(open(url))
+      begin
+        page = Nokogiri::HTML(open(url))
+        @pages.push(page)
+      rescue OpenURI::HTTPError
+        p 'Error: page not found'
+      end
     end
   end
 
