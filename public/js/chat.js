@@ -53,7 +53,9 @@ var Chat = function(id, player) {
 	};
 
 	this._renderComboMessage = function(emote, comboCount) {
-		return self._generateDestinyEmoteImage(emote) + "<span class='x'>x" + comboCount + "</span> C-C-COMBO";
+		return self._generateDestinyEmoteImage(emote) + 
+			"<span class='x'> x" + comboCount + " </span>" + 
+			"<span class='combo'>C-C-C-COMBO</span>";
 	}
 
 	this._renderChatMessage = function(username, message) {

@@ -271,8 +271,12 @@ body {
 
 .x {
 	font-weight: bold;
-	font-size: 14px;
+	font-size: 16px;
 	color: white;
+}
+
+.combo {
+	font-size: 14px;
 }
 
 /* Scroll Bar Style */
