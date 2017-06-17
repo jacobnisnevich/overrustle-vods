@@ -31,7 +31,7 @@ var globals = {
 		'Hhhehhehe': {backgroundPosition: '-224px -126px', width: '35px', height: '25px', marginTop: '-25px;'},
 		'SpookerZ': {backgroundPosition: '-224px -151px', width: '34px', height: '30px', marginTop: '-30px;'},
 		'SWEATSTINY': {backgroundPosition: '0 -209px', width: '34px', height: '30px', marginTop: '-30px;'},
-		'WEEWOO': {backgroundPosition: '-34px -209px', width: '33px', height: '30px', marginTop: '-30px;'},
+		'WEEWOO': {backgroundPosition: '-34px -209px', width: '33px', height: '29px', marginTop: '-30px;'},
 		'SURPRISE': {backgroundPosition: '-67px -209px', width: '33px', height: '30px', marginTop: '-30px;'},
 		'OverRustle': {backgroundPosition: '-100px -209px', width: '33px', height: '29px', marginTop: '-30px;'},
 		'LeRuse': {backgroundPosition: '-133px -209px', width: '33px', height: '30px', marginTop: '-30px;'},
