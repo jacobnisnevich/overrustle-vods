@@ -279,6 +279,16 @@ body {
 	font-size: 14px;
 }
 
+/* Special Chat Colors */
+
+.user-Destiny {
+	color: #b91010 !important;
+}
+
+.user-Bot_v2_Beta, .user-Bot, .user-Logs {
+	color: #e79015 !important;
+}
+
 /* Scroll Bar Style */
 
 ::-webkit-scrollbar-track

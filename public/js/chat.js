@@ -11,6 +11,10 @@ var Chat = function(id, player) {
 
 	var self = this;
 
+	$.get('/users', function(data) {
+		self._parseUserData(JSON.parse(data));
+	});
+
 	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
 		self.recordedTime = moment(vodData.recorded_at).utc();
 
@@ -42,6 +46,20 @@ var Chat = function(id, player) {
 		this.status = "paused";
 	};
 
+	this._parseUserData = function(data) {
+		var styleString = "<style>\n";
+
+		Object.keys(data).forEach(function(username) {
+			styleString += ".user-" + username + " {\n";
+			styleString += "\t color: " + data[username].color + " !important;\n";
+			styleString += "}\n"
+		});
+
+		styleString += "</style>"
+
+		$("head").append(styleString);
+	};
+
 	this._formatMessage = function(message) {
 		var messageReplaced = message.linkify();
 
@@ -61,7 +79,7 @@ var Chat = function(id, player) {
 	this._renderChatMessage = function(username, message) {
 		var usernameField = "";
 		if (username) {
-			usernameField =  "<span class='username .user-" + username + "'>" + username + "</span>: ";
+			usernameField =  "<span class='username user-" + username + "'>" + username + "</span>: ";
 		}
 
 		$("#chat-stream").append("<div class='chat-line'>" + 
