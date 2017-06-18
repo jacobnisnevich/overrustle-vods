@@ -12,6 +12,12 @@ $(document).ready(function() {
         $("#browse").show();
     }
 
+    $("#player").split({
+        orientation: 'vertical',
+        limit: 10,
+        position: '80%'
+    });
+
     $("#next-page-button").click(function() {
         page += 1;
         $("#page-number").text(page);

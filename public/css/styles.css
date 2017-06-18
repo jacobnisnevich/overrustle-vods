@@ -192,6 +192,10 @@ body {
 	width: 100%;
 }
 
+.vsplitter {
+	width: 10px;
+}
+
 #chat-container {
 	height: -moz-calc(100% - 72px);
 	height: -webkit-calc(100% - 72px);
