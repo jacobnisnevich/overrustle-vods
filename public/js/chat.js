@@ -18,8 +18,8 @@ var Chat = function(id, player) {
 	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
 		self.recordedTime = moment(vodData.recorded_at).utc();
 
-		// http://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
-		var overrustleLogsMonth = "http://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
+		// https://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
+		var overrustleLogsMonth = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
 			self.recordedTime.format("MMMM") + "%20" + 
 			self.recordedTime.format("YYYY") + "/" + 
 			self.recordedTime.format("YYYY") + "-" +
