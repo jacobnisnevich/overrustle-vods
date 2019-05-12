@@ -12,7 +12,7 @@ get '/chat' do
   overRustleLogsParser.get_chat.to_json
 end
 
-get '/users' do
-  usersParser = UsersParser.new
-  usersParser.get_user_data.to_json
-end
+# get '/users' do
+#   usersParser = UsersParser.new
+#   usersParser.get_user_data.to_json
+# end

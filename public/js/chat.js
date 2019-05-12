@@ -11,9 +11,9 @@ var Chat = function(id, player) {
 
 	var self = this;
 
-	$.get('/users', function(data) {
-		self._parseUserData(JSON.parse(data));
-	});
+	// $.get('/users', function(data) {
+	//   self._parseUserData(JSON.parse(data));
+	// });
 
 	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
 		self.recordedTime = moment(vodData.recorded_at).utc();
