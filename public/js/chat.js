@@ -15,8 +15,11 @@ var Chat = function(id, player) {
 	//   self._parseUserData(JSON.parse(data));
 	// });
 
-	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
-		self.recordedTime = moment(vodData.recorded_at).utc();
+	//sending a client-id header by default
+	$.ajaxSetup({headers: {"Client-ID" : "88bxd2ntyahw9s8ponrq2nwluxx17q"}});
+
+	$.get("https://api.twitch.tv/helix/videos?id=" + this.videoId, function(vodData) {
+		self.recordedTime = moment(vodData["data"][0]["created_at"]).utc();
 
 		// https://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
 		var overrustleLogsMonth = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 

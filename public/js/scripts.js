@@ -1,13 +1,15 @@
 $(document).ready(function() {
     var id = getUrlParameter("id");
     var page = 1;
+    //nextPage === 0 when you go to the next page, === 1 when you go back a page, === 2 when you load the first page
+    var nextPage = 2;
 
     if (id) {
         loadPlayer(id);
         $("#browse").hide();
         $("#player").show();
     } else {
-        loadVODs(page);
+        loadVODs(nextPage);
         $("#player").hide();
         $("#browse").show();
     }
@@ -20,8 +22,10 @@ $(document).ready(function() {
 
     $("#next-page-button").click(function() {
         page += 1;
+        nextPage = 0;
+
         $("#page-number").text(page);
-        loadVODs(page);
+        loadVODs(nextPage);
 
         if (page === 1) {
             $("#previous-page-button").addClass("disabled");
@@ -31,10 +35,11 @@ $(document).ready(function() {
     });
 
     $("#previous-page-button").click(function() {
+        nextPage = 1;
         if (page > 1) { 
             page -= 1;
             $("#page-number").text(page);
-            loadVODs(page);
+            loadVODs(nextPage);
         }
 
         if (page === 1) {
@@ -58,18 +63,43 @@ $(document).ready(function() {
     });
 });
 
-var loadVODs = function(page) {
-    var destinyVodsUrl = "https://api.twitch.tv/kraken/channels/destiny/videos?limit=9&offset=" + (page - 1) * 9 + 
-                         "&broadcasts=true&client_id=88bxd2ntyahw9s8ponrq2nwluxx17q";
+var destinyUserID = 18074328;
 
-    $.get(destinyVodsUrl, function(data) {
-        $("#vod-list").empty();
-        createVodEntries(data);
-    });
+var pageCursor = 0;
+
+$.ajaxSetup({headers: {"Client-ID" : "88bxd2ntyahw9s8ponrq2nwluxx17q"}})
+
+var loadVODs = function(nextPage) {
+    if (nextPage === 2) {
+        var destinyVodsUrl = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=9&type=archive";
+
+        $.get(destinyVodsUrl, function(data) {
+            $("#vod-list").empty();
+            createVodEntries(data);
+            pageCursor = data.pagination.cursor;
+        });
+    } else if (nextPage === 0) {
+        var destinyVodsUrl = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=9&type=archive&after=" + pageCursor;
+
+        $.get(destinyVodsUrl, function(data) {
+            $("#vod-list").empty();
+            createVodEntries(data);
+            pageCursor = data.pagination.cursor;
+        });
+    } else {
+        var destinyVodsUrl = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=9&type=archive&before=" + pageCursor;
+
+        $.get(destinyVodsUrl, function(data) {
+            $("#vod-list").empty();
+            createVodEntries(data);
+            pageCursor = data.pagination.cursor;
+        });
+    }
+    
 }
 
 var loadDestinyStatus = function() {
-    var destinyStatusUrl = "https://api.twitch.tv/kraken/streams/destiny?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q";
+    var destinyStatusUrl = "https://api.twitch.tv/helix/streams?user_login=destiny";
 
     $.get(destinyStatusUrl, function(data) {
         if (data.stream === null) {
@@ -100,14 +130,14 @@ var loadPlayer = function(id) {
 }
 
 var createVodEntries = function(vodData) {
-    vodData.videos.forEach(function(vod) {
+    vodData.data.forEach(function(vod) {
         createVodEntry({
-            id: vod._id, 
+            id: vod.id, 
             title: vod.title, 
-            image: vod.preview, 
-            views: vod.views, 
-            date: formatDate(vod.recorded_at), 
-            length: formatLength(vod.length),
+            image: vod.thumbnail_url.replace(/%([\s\S]*)(?=\.)/, "320x180"), 
+            views: vod.view_count, 
+            date: formatDate(vod.created_at), 
+            length: vod.duration,
             game: vod.game
         });
     })
