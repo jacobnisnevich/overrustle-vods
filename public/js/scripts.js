@@ -102,7 +102,7 @@ var loadDestinyStatus = function() {
     var destinyStatusUrl = "https://api.twitch.tv/helix/streams?user_login=destiny";
 
     $.get(destinyStatusUrl, function(data) {
-        if (data.stream === null) {
+        if (data.data === null || []) {
             $("#destiny-status").text("Destiny is offline.");
             $("#destiny-status").css("color", "#a70000");
         } else {
