@@ -3,7 +3,7 @@ var Chat = function(id, player) {
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
-	this.chatDelay = 8;
+	this.chatDelay = 2;
 	this.previousTimeOffset = -1;
 
 	this.previousMessage = '';
@@ -41,6 +41,27 @@ var Chat = function(id, player) {
 		});
 	});
 
+	//pulling the emote json file from the dgg cdn, not sure how to do this without a cors proxy :(
+	$.get("https://cors-anywhere.herokuapp.com/https://cdn.destiny.gg/2.13.0/emotes/emotes.json", function(emoteList){
+		this.emoteList = emoteList;
+		//stolen from ceneza Blesstiny
+		self.emoteMap = new Map();
+		emoteList.forEach(v => self.emoteMap.set(v.prefix, v));
+	});
+
+	//stolen from ceneza Blesstiny
+	this.loadCss = function(url) {
+        const link = document.createElement('link');
+        link.href = url;
+        link.type = 'text/css';
+        link.rel = 'stylesheet';
+        link.media = 'screen';
+        document.getElementsByTagName('head')[0].appendChild(link);
+        return link;
+	};
+	
+	this.loadCss("https://cdn.destiny.gg/2.13.0/emotes/emotes.css");
+
 	this.startChatStream = function() {
 		this.status = "running";
 	};
@@ -66,8 +87,9 @@ var Chat = function(id, player) {
 	this._formatMessage = function(message) {
 		var messageReplaced = message.linkify();
 
-		Object.keys(globals.destinyEmotes).forEach(function(emote) {
-			messageReplaced = messageReplaced.split(emote).join(self._generateDestinyEmoteImage(emote));
+		self.emoteMap.forEach(function(emote) {
+			emoteOutput = emote["prefix"];
+			messageReplaced = messageReplaced.split(emoteOutput).join(self._generateDestinyEmoteImage(emoteOutput));
 		});
 
 		return this._greenTextify(messageReplaced);
@@ -92,14 +114,13 @@ var Chat = function(id, player) {
 	}
 
 	this._generateDestinyEmoteImage = function(emote) {
-		var styles = globals.destinyEmotes[emote];
+		var styles = self.emoteMap.get(emote);
 
-		return "<div class='emote emote-" + emote + "' " + 
+		return "<div class='emote " + emote + "' " + 
 			"title='" + emote + "'" +
-			"style='background-position: " + styles.backgroundPosition + "; " + 
-			"width: " + styles.width + "; " + 
-			"height: " + styles.height + "; " + 
-			"margin-top: " + styles.marginTop + "'/>";
+			"style='background-image: url(\"" + styles["image"]["0"]["url"] + "\"); " + 
+			"width: " + styles["image"]["0"]["width"] + "px; " + 
+			"height: " + styles["image"]["0"]["height"] + "px'/>";
 	};
 
 	this._greenTextify = function(message) {
@@ -132,7 +153,7 @@ var Chat = function(id, player) {
 			
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
 				self.chat[utcFormat].forEach(function(chatLine) {
-					if (self.previousMessage == chatLine.message && globals.destinyEmotes[self.previousMessage]) {
+					if (self.previousMessage == chatLine.message && self.emoteMap.get(self.previousMessage)) {
 						self.comboCount++;
 
 						$('#chat-stream .chat-line').last().remove();

@@ -243,13 +243,10 @@ body {
 }
 
 .chat-line .emote {
-	background-image: url("../emoticons/emotes.png");
 	background-repeat: no-repeat;
 	display: inline-block;
 	position: relative;
 	z-index: 1;
-	top: 10px;
-	margin: 0 2px;
 	overflow: hidden;
 	text-indent: -90000px;
 	vertical-align: middle;
