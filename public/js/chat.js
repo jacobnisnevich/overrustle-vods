@@ -49,19 +49,6 @@ var Chat = function(id, player) {
 		emoteList.forEach(v => self.emoteMap.set(v.prefix, v));
 	});
 
-	//stolen from ceneza Blesstiny
-	this.loadCss = function(url) {
-        const link = document.createElement('link');
-        link.href = url;
-        link.type = 'text/css';
-        link.rel = 'stylesheet';
-        link.media = 'screen';
-        document.getElementsByTagName('head')[0].appendChild(link);
-        return link;
-	};
-	
-	this.loadCss("https://cdn.destiny.gg/2.13.0/emotes/emotes.css");
-
 	this.startChatStream = function() {
 		this.status = "running";
 	};
