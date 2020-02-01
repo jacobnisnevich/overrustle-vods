@@ -15,7 +15,7 @@ var Chat = function(id, player) {
 	//   self._parseUserData(JSON.parse(data));
 	// });
 
-	//sending a client-id header by default
+	// sending a client-id header by default
 	$.ajaxSetup({headers: {"Client-ID" : "88bxd2ntyahw9s8ponrq2nwluxx17q"}});
 
 	$.get("https://api.twitch.tv/helix/videos?id=" + this.videoId, function(vodData) {
@@ -41,12 +41,11 @@ var Chat = function(id, player) {
 		});
 	});
 
-	//pulling the emote json file from the dgg cdn, not sure how to do this without a cors proxy :(
-	$.get("https://cors-anywhere.herokuapp.com/https://cdn.destiny.gg/2.13.0/emotes/emotes.json", function(emoteList){
-		this.emoteList = emoteList;
-		//stolen from ceneza Blesstiny
-		self.emoteMap = new Map();
-		emoteList.forEach(v => self.emoteMap.set(v.prefix, v));
+	$.get("/emotes", function(data) {
+		self.emotes = JSON.parse(data);
+		// stolen from ceneza Blesstiny
+		self.emoteList = {};
+		self.emotes.forEach(v => self.emoteList[v.prefix] = v);
 	});
 
 	this.startChatStream = function() {
@@ -74,8 +73,8 @@ var Chat = function(id, player) {
 	this._formatMessage = function(message) {
 		var messageReplaced = message.linkify();
 
-		self.emoteMap.forEach(function(emote) {
-			emoteOutput = emote["prefix"];
+		Object.keys(self.emoteList).forEach(function(emote) {
+			emoteOutput = self.emoteList[emote]["prefix"];
 			messageReplaced = messageReplaced.split(emoteOutput).join(self._generateDestinyEmoteImage(emoteOutput));
 		});
 
@@ -101,7 +100,7 @@ var Chat = function(id, player) {
 	}
 
 	this._generateDestinyEmoteImage = function(emote) {
-		var styles = self.emoteMap.get(emote);
+		var styles = self.emoteList[emote];
 
 		return "<div class='emote " + emote + "' " + 
 			"title='" + emote + "'" +
@@ -140,7 +139,7 @@ var Chat = function(id, player) {
 			
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
 				self.chat[utcFormat].forEach(function(chatLine) {
-					if (self.previousMessage == chatLine.message && self.emoteMap.get(self.previousMessage)) {
+					if (self.previousMessage == chatLine.message && self.emoteList[self.previousMessage]) {
 						self.comboCount++;
 
 						$('#chat-stream .chat-line').last().remove();
