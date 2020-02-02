@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'json'
-require "open-uri"
+require 'open-uri'
 
 require File.expand_path('../lib/overrustle-vods.rb', __FILE__)
 
