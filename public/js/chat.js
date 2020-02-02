@@ -3,7 +3,7 @@ var Chat = function(id, player) {
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
-	this.chatDelay = 8;
+	this.chatDelay = 2;
 	this.previousTimeOffset = -1;
 
 	this.previousMessage = '';
@@ -15,8 +15,11 @@ var Chat = function(id, player) {
 	//   self._parseUserData(JSON.parse(data));
 	// });
 
-	$.get("https://api.twitch.tv/kraken/videos/" + id + "?client_id=88bxd2ntyahw9s8ponrq2nwluxx17q", function(vodData) {
-		self.recordedTime = moment(vodData.recorded_at).utc();
+	// sending a client-id header by default
+	$.ajaxSetup({headers: {"Client-ID" : "88bxd2ntyahw9s8ponrq2nwluxx17q"}});
+
+	$.get("https://api.twitch.tv/helix/videos?id=" + this.videoId, function(vodData) {
+		self.recordedTime = moment(vodData["data"][0]["created_at"]).utc();
 
 		// https://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
 		var overrustleLogsMonth = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
@@ -36,6 +39,13 @@ var Chat = function(id, player) {
 			self.chat = JSON.parse(data);
 			self.startChatStream();
 		});
+	});
+
+	$.get("/emotes", function(data) {
+		self.emotes = JSON.parse(data);
+		// stolen from ceneza Blesstiny
+		self.emoteList = {};
+		self.emotes.forEach(v => self.emoteList[v.prefix] = v);
 	});
 
 	this.startChatStream = function() {
@@ -63,8 +73,9 @@ var Chat = function(id, player) {
 	this._formatMessage = function(message) {
 		var messageReplaced = message.linkify();
 
-		Object.keys(globals.destinyEmotes).forEach(function(emote) {
-			messageReplaced = messageReplaced.split(emote).join(self._generateDestinyEmoteImage(emote));
+		Object.keys(self.emoteList).forEach(function(emote) {
+			emoteOutput = self.emoteList[emote]["prefix"];
+			messageReplaced = messageReplaced.split(emoteOutput).join(self._generateDestinyEmoteImage(emoteOutput));
 		});
 
 		return this._greenTextify(messageReplaced);
@@ -89,14 +100,13 @@ var Chat = function(id, player) {
 	}
 
 	this._generateDestinyEmoteImage = function(emote) {
-		var styles = globals.destinyEmotes[emote];
+		var styles = self.emoteList[emote];
 
-		return "<div class='emote emote-" + emote + "' " + 
+		return "<div class='emote " + emote + "' " + 
 			"title='" + emote + "'" +
-			"style='background-position: " + styles.backgroundPosition + "; " + 
-			"width: " + styles.width + "; " + 
-			"height: " + styles.height + "; " + 
-			"margin-top: " + styles.marginTop + "'/>";
+			"style='background-image: url(\"" + styles["image"]["0"]["url"] + "\"); " + 
+			"width: " + styles["image"]["0"]["width"] + "px; " + 
+			"height: " + styles["image"]["0"]["height"] + "px'/>";
 	};
 
 	this._greenTextify = function(message) {
@@ -129,7 +139,7 @@ var Chat = function(id, player) {
 			
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
 				self.chat[utcFormat].forEach(function(chatLine) {
-					if (self.previousMessage == chatLine.message && globals.destinyEmotes[self.previousMessage]) {
+					if (self.previousMessage == chatLine.message && self.emoteList[self.previousMessage]) {
 						self.comboCount++;
 
 						$('#chat-stream .chat-line').last().remove();
