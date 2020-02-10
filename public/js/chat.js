@@ -46,6 +46,8 @@ var Chat = function(id, player) {
 		// stolen from ceneza Blesstiny
 		self.emoteList = {};
 		self.emotes.forEach(v => self.emoteList[v.prefix] = v);
+		const emoticons = self.emotes.map(v => v['prefix']).join('|') + "|" + bbdggEmotes["bbdgg"].join('|');
+		self.emoteRegexNormal = new RegExp(`(^|\\s)(${emoticons})(?=$|\\s)`, 'gm');
 	});
 
 	this.startChatStream = function() {
@@ -73,10 +75,11 @@ var Chat = function(id, player) {
 	this._formatMessage = function(message) {
 		var messageReplaced = message.linkify();
 
-		Object.keys(self.emoteList).forEach(function(emote) {
-			emoteOutput = self.emoteList[emote]["prefix"];
-			messageReplaced = messageReplaced.split(emoteOutput).join(self._generateDestinyEmoteImage(emoteOutput));
-		});
+		function replacer(p1) {
+			return self._generateDestinyEmoteImage(p1.replace(/ /g,''));
+		}
+
+		messageReplaced = messageReplaced.replace(self.emoteRegexNormal, replacer);
 
 		return this._greenTextify(messageReplaced);
 	};
@@ -100,13 +103,7 @@ var Chat = function(id, player) {
 	}
 
 	this._generateDestinyEmoteImage = function(emote) {
-		var styles = self.emoteList[emote];
-
-		return "<div class='emote " + emote + "' " + 
-			"title='" + emote + "'" +
-			"style='background-image: url(\"" + styles["image"]["0"]["url"] + "\"); " + 
-			"width: " + styles["image"]["0"]["width"] + "px; " + 
-			"height: " + styles["image"]["0"]["height"] + "px'/>";
+		return " <div class='emote " + emote + "' title=" + emote + "/>";
 	};
 
 	this._greenTextify = function(message) {
