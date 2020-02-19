@@ -49,9 +49,33 @@
 		</div>
 	</script>
 
+	<script>
+		// only leaves numbers from the url
+		function vodURL(url) {
+			regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
+			replaced = url.match(regex);
+			window.location.href += "?id=" + replaced[0].replace(/[?]/gm, '&');
+		};
+	</script>
+
+	<script>
+		// click button on "Enter" press
+		// stolen from https://stackoverflow.com/questions/155188/trigger-a-button-click-with-javascript-on-the-enter-key-in-a-text-box
+		window.onload = function () {
+			document.getElementById("customUrlText").addEventListener("keyup", function(event) {
+				event.preventDefault();
+				if (event.keyCode === 13) {
+					document.getElementById("customUrlButton").click();
+				};
+			});
+		};
+	</script>
+
 	<div id="header" class="shadow">
 		<div id="header-title">OverRustle VODs</div>
 		<div id="header-links">
+			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch VOD url"></div>
+			<div><input id="customUrlButton" value="Submit" onclick="vodURL(document.getElementById('customUrlText').value)" type="button"></div>
 			<div><a href="https://www.destiny.gg">Destiny.gg</a></div>
 			<div><a id="destiny-status" href="https://www.destiny.gg/bigscreen">Destiny is offline.</a></div>
 		</div>
