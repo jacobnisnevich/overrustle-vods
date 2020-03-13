@@ -4,7 +4,7 @@ require 'open-uri'
 
 require File.expand_path('../lib/overrustle-vods.rb', __FILE__)
 
-emotes = open('https://cdn.destiny.gg/2.13.0/emotes/emotes.json')
+emotes = open('https://cdn.destiny.gg/emotes/emotes.json')
 
 get '/' do
   File.read(File.join('public', 'index.html'))
