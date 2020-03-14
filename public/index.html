@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="css/tooltipster.bundle.min.css" />
 	<link rel="stylesheet" href="css/styles.css"/>
 	<link rel="stylesheet" href="css/bbdgg.css"/>
-	<link rel="stylesheet" href="https://cdn.destiny.gg/2.13.0/emotes/emotes.css"/>
 
 	<link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono" rel="stylesheet">
@@ -47,6 +46,15 @@
 				<div class="date">${date}</div>
 			</div>
 		</div>
+	</script>
+
+	<script>
+		// adding a random number to the emote stylesheet url so that we avoid caching and (hopefully) always get the most recent version
+		// from https://stackoverflow.com/questions/58972512/linking-a-css-file-with-version-number-for-cache-busting
+		window.addEventListener('load', function() {
+  			var head = document.querySelector('head');
+  			head.innerHTML += '<link rel="stylesheet" href="https://cdn.destiny.gg/emotes/emotes.css?_=' + Math.random() + '" type="text/css">';
+		});
 	</script>
 
 	<script>
