@@ -16,7 +16,8 @@ var Chat = function(id, player) {
 	// });
 
 	$.get("/vodinfo?id=" + this.videoId, function(vodData) {
-		self.recordedTime = moment(vodData["data"][0]["created_at"]).utc();
+		data = JSON.parse(vodData)
+		self.recordedTime = moment(data["data"][0]["created_at"]).utc();
 
 		// https://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
 		var overrustleLogsMonth = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
@@ -129,7 +130,7 @@ var Chat = function(id, player) {
 	window.setInterval(function() {
 		if (self.status == "running" && self.chat) {
 			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
-			var utcFormat = self.recordedTime.clone().add(self.chatDelay + currentTimeOffset, 's').format().replace("+00:00", "Z");
+			var utcFormat = self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset, 's').format().replace("+00:00", "Z");
 			
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
 				self.chat[utcFormat].forEach(function(chatLine) {

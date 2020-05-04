@@ -1,7 +1,16 @@
+var globals = {};
+
 $(document).ready(function() {
     var id = getUrlParameter("id");
     var time = getUrlParameter("t");
     var page = 1;
+    globals.sizes = localStorage.getItem('split-sizes');
+
+    if (globals.sizes) {
+        globals.sizes = JSON.parse(globals.sizes);
+    } else {
+        globals.sizes = [80, 20];
+    }
 
     if (id && time) {
         loadPlayer(id, time);
@@ -23,10 +32,14 @@ $(document).ready(function() {
         $("#browse").show();
     }
 
-    $("#player").split({
-        orientation: 'vertical',
-        limit: 10,
-        position: '80%'
+    globals.splitInstance = Split(['#video-player', '#chat-container'], {
+        sizes: globals.sizes,
+        gutterSize: 8,
+        minSize: 200,
+        cursor: 'col-resize',
+        onDragEnd: function(sizes) {
+            localStorage.setItem('split-sizes', JSON.stringify(sizes));
+        }
     });
 
     $("#next-page-button").click(function() {
@@ -73,6 +86,52 @@ $(document).ready(function() {
         }
     });
 
+    $("#dec-delay-button").click(function() {
+        delay = Number($("#delay").text());
+        if (delay >= 1) {
+            delay -= 1;
+            $("#delay").text(delay);
+        }
+    });
+
+    $("#inc-delay-button").click(function() {
+        delay = Number($("#delay").text()) + 1;
+        $("#delay").text(delay);
+    });
+
+    $("#switch-sides-button").click(function() {
+        if (document.getElementById("player").style["flex-direction"] === "row") {
+            document.getElementById("player").style["flex-direction"] = "row-reverse";
+            globals.splitInstance.destroy();
+            globals.splitInstance = Split(['#video-player', '#chat-container'], {
+                sizes: globals.sizes,
+                gutterSize: 8,
+                minSize: 200,
+                cursor: 'col-resize',
+                onDragEnd: function(sizes) {
+                    globals.sizes = sizes;
+                    localStorage.setItem('split-sizes', JSON.stringify(sizes));
+                }
+            });
+            return true;
+        }
+        if (document.getElementById("player").style["flex-direction"] === "row-reverse") {
+            document.getElementById("player").style["flex-direction"] = "row";
+            globals.splitInstance.destroy();
+            globals.splitInstance = Split(['#video-player', '#chat-container'], {
+                sizes: globals.sizes,
+                gutterSize: 8,
+                minSize: 200,
+                cursor: 'col-resize',
+                onDragEnd: function(sizes) {
+                    globals.sizes = sizes;
+                    localStorage.setItem('split-sizes', JSON.stringify(sizes));
+                }
+            });
+            return true;
+        }
+    });
+
     // Check if Destiny is online every 5 minutes
     setInterval(loadDestinyStatus(), 300000);
 
@@ -114,7 +173,8 @@ var pageCursor = 0;
 var loadDestinyStatus = function() {
     var destinyStatusUrl = "/userinfo?user_login=destiny";
 
-    $.get(destinyStatusUrl, function(data) {
+    $.get(destinyStatusUrl, function(userdata) {
+        data = JSON.parse(userdata)
         if (data.data === null || data.data.length === 0) {
             $("#destiny-status").text("Destiny is offline.");
             $("#destiny-status").css("color", "#a70000");
