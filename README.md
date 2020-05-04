@@ -10,8 +10,19 @@ OverRustle VODs requires Ruby to run properly. I've tested with Ruby `2.2.1p85` 
 bundle install
 ```
 
-to install all gem dependencies and then start the project with 
+to install all gem dependencies
 
+Don't forget to edit the .env file:
+
+```bash
+cp ./.env.example ./.env
+vim ./.env
+```
+and then start the project with
 ```
 ruby app.rb
 ```
+
+## Deploying to Heroku
+
+Deploying to Heroku is pretty straightforward, but you need to add the "TWITCH_CLIENT_ID" and "TWITCH_CLIENT_SECRET" config var in Settings before deploying.

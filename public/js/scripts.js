@@ -91,15 +91,15 @@ var allVODs = [];
 
 async function loadVODs() {
     vodArray = [];
-    var destinyVODsURL = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=100&type=archive";
-    let response = await fetch(destinyVODsURL, { headers: { 'Client-ID': clientID}});
+    var destinyVODsURL = "/vodinfo?user_id=" + destinyUserID + "&first=100&type=archive";
+    let response = await fetch(destinyVODsURL);
     let data = await response.json();
     pageCursor = data.pagination.cursor;
     vodArray.push(...data.data);
     // if there are more than 100 vods, check next page and add everything there to the array; repeat until done
     while (data.data.length === 100 && pageCursor != ("" || null)) {
-        destinyVODsURL = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=100&type=archive&after=" + pageCursor;
-        response = await fetch(destinyVODsURL, { headers: { 'Client-ID': clientID}});
+        destinyVODsURL = "/vodinfo?user_id=" + destinyUserID + "&first=100&type=archive&after=" + pageCursor;
+        response = await fetch(destinyVODsURL);
         data = await response.json();
         pageCursor = data.pagination.cursor;
         vodArray.push(...data.data);
@@ -111,12 +111,8 @@ var destinyUserID = 18074328;
 
 var pageCursor = 0;
 
-var clientID = "88bxd2ntyahw9s8ponrq2nwluxx17q";
-
-$.ajaxSetup({headers: {"Client-ID" : clientID}});
-
 var loadDestinyStatus = function() {
-    var destinyStatusUrl = "https://api.twitch.tv/helix/streams?user_login=destiny";
+    var destinyStatusUrl = "/userinfo?user_login=destiny";
 
     $.get(destinyStatusUrl, function(data) {
         if (data.data === null || data.data.length === 0) {
