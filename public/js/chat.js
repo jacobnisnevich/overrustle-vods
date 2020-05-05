@@ -16,21 +16,35 @@ var Chat = function(id, player) {
 	// });
 
 	$.get("/vodinfo?id=" + this.videoId, function(vodData) {
+		self.hReplace = new RegExp('([h])', 'gm');
+		self.mReplace = new RegExp('([m])', 'gm');
+		self.sReplace = new RegExp('([s])', 'gm');
 		data = JSON.parse(vodData)
 		self.recordedTime = moment(data["data"][0]["created_at"]).utc();
+		self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
+		self.duration = moment.duration(self.durationString).asSeconds();
+		self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
+		self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+		
+		var overrustleLogsDates = [];
 
-		// https://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
-		var overrustleLogsMonth = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
-			self.recordedTime.format("MMMM") + "%20" + 
-			self.recordedTime.format("YYYY") + "/" + 
-			self.recordedTime.format("YYYY") + "-" +
-			self.recordedTime.format("MM") + "-";
+		for (let i = 0; i <= self.difference; i++) {
+			if (self.recordedTime.format("MM") === self.recordedTime.clone().add(i, 'days').format("MM")) {
+				var overrustleLogsStr = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
+					self.recordedTime.format("MMMM") + "%20" + 
+					self.recordedTime.format("YYYY") + "/" + 
+					self.recordedTime.format("YYYY") + "-" +
+					self.recordedTime.format("MM") + "-" + self.recordedTime.clone().add(i, 'days').format("DD") + ".txt";
+			} else {
+				var overrustleLogsStr = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
+					self.recordedTime.clone().add(i, 'days').format("MMMM") + "%20" + 
+					self.recordedTime.clone().add(i, 'days').format("YYYY") + "/" + 
+					self.recordedTime.clone().add(i, 'days').format("YYYY") + "-" +
+					self.recordedTime.clone().add(i, 'days').format("MM") + "-" + self.recordedTime.clone().add(i, 'days').format("DD") + ".txt";
+			}
+			overrustleLogsDates.push(overrustleLogsStr);
+		}
 
-		var overrustleLogsDates = [
-			overrustleLogsMonth + self.recordedTime.format("DD") + ".txt",
-			overrustleLogsMonth + self.recordedTime.clone().add(1, 'days').format("DD") + ".txt"
-		];
-			
 		$.get("/chat", {
 			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {

@@ -62,7 +62,7 @@
 		function vodURL(url) {
 			regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
 			replaced = url.match(regex);
-			window.location.href += "?id=" + replaced[0].replace(/[?]/gm, '&');
+			window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&');
 		};
 	</script>
 
@@ -110,7 +110,9 @@
 					</div>
 					<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
 				</div>
-				<div id="chat-stream"></div>
+				<div id="chat-stream">
+					<div class="inner-stream"></div>
+				</div>
 			</div>
 		</div>
 	</div>
