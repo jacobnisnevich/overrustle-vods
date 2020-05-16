@@ -164,7 +164,7 @@ var Chat = function(id, player) {
 
 				$("#chat-stream").animate({ 
 					scrollTop: $("#chat-stream").prop("scrollHeight")
-				}, 1000);
+				}, 0);
 			}
 
 			self.previousTimeOffset = currentTimeOffset;
