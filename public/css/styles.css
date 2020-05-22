@@ -76,6 +76,10 @@ body {
 	position: relative;
 }
 
+#changelog-text {
+	width: 90%;
+}
+
 #close-changelog-button {
 	position: absolute;
 	right: 1em;
@@ -336,6 +340,22 @@ body {
 }
 
 /* Special Chat Colors */
+
+#loading-message-1 {
+	font-size: x-large;
+	text-align: center;
+	margin-top: 12em;
+}
+
+#loading-message-2 {
+	font-size: medium;
+	text-align: center;
+}
+
+#loading-message-3 {
+	font-size: 0.9em;
+	text-align: center;
+}
 
 .loading-message {
 	color: #b002c7 !important;	

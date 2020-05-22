@@ -10,11 +10,20 @@ var Chat = function(id, player, type) {
 	this.previousMessage = '';
 	this.comboCount = 1;
 
-	const cuteEmotes = ['Aslan', 'AYAYA', 'Blubstiny', 'Cutestiny', 'DestiSenpaii', 'FeelsOkayMan', 
+	const cuteEmotes = ['ASLAN', 'AYAYA', 'Blubstiny', 'Cutestiny', 'DestiSenpaii', 'FeelsOkayMan', 
 	'FerretLOL', 'FrankerZ', 'Hhhehhehe', 'NOBULLY', 'OhMyDog', 'PepoTurkey',
 	'POTATO', 'Slugstiny', 'SoDoge', 'TeddyPepe', 'widepeepoHappy', 'WOOF',
 	'Wowee', 'YEE', 'YEEHAW', 'ComfyAYA', 'ComfyFerret', 'MiyanoHype',
 	'PepoComfy', 'ComfyDog', 'nathanAYAYA', 'nathanWeeb'];
+
+	const memeMessages = ["<div class='emote YEE' title=YEE></div> neva lie, <div class='emote YEE' title=YEE></div> neva, <div class='emote YEE' title=YEE></div> neva lie.",
+						"Don't believe his lies.", "You could've played that better.", "Dishonorable PVP <div class='emote OverRustle' title=OverRustle></div>", 
+						"how do not have any cups in your apartment wtf",
+						"destiny before you have sex are you supposed to have a boner before the girl sees it?", 
+						"Well RightToBearArmsLOL, honestly, I think I might talk to Steven about your odd rhetoric.",
+						"BAR BAR BAR", "he handles my", "nukesys", "Did I shield in Lords Mobile?", "THE TIME FOR CHILLING HAS PASSED",
+						"OK HERES THE PLAN", "NO TEARS NOW, ONLY DREAMS", "How did I end up cleaning carpets? <div class='emote LeRuse' title=LeRuse></div>",
+						"B O D G A Y", "JIMMY NOOOO", "<div class='emote nathanTiny2' title=nathanTiny2></div>", ">more like", "Chat, don't woof."];
 
 	var self = this;
 
@@ -65,17 +74,22 @@ var Chat = function(id, player, type) {
 		}
 
 		var randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
+		var randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];
 
 		loadingEmote = " <div class='emote " + randomEmote + "' title=" + randomEmote + "/>"
 
-		$("#chat-stream").append("<div id='loading-message' class='chat-line'><span class='username loading-message'>Loading!</span> <span class='message'>Please wait " + loadingEmote + "</span></div>");
+		$("#chat-stream").append("<div id='loading-message-1' class='chat-line'><span class='username loading-message'>Loading logs!</span></div>");
+		$("#chat-stream").append("<div id='loading-message-2' class='chat-line'><span class='message'>Please wait " + loadingEmote + "</span></div>");
+		$("#chat-stream").append("<div id='loading-message-3' class='chat-line'><span class='message'>" + randomMessage + "</span></div>");
 
 		$.get("/chat", {
 			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {
 			self.chat = JSON.parse(data);
 			self.startChatStream();
-			$("#loading-message").remove();
+			$("#loading-message-1").remove();
+			$("#loading-message-2").remove();
+			$("#loading-message-3").remove();
 		});
 	});
 
