@@ -57,11 +57,24 @@
 	</script>
 
 	<script>
-		// only leaves numbers from the url
+		// detecting if url is yt or twitch
 		function vodURL(url) {
-			regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
-			replaced = url.match(regex);
-			window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&');
+			var urlCheck = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/gm;
+			var matches = url.matchAll(urlCheck);
+			var matchArray = [...matches];
+			console.log(matchArray)
+			if (matchArray[0][3] === "www.twitch.tv" || matchArray[0][3] === "twitch.tv") {
+				regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
+				replaced = url.match(regex);
+				console.log(replaced);
+				window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&');
+			}
+			if (matchArray[0][3] === "www.youtube.com" || matchArray[0][3] === "www.youtube.com") {
+				window.location.href = window.location.origin + matchArray[0][7];
+			}
+			if (matchArray[0][3] === "youtu.be") {
+				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&');
+			}
 		};
 	</script>
 
@@ -82,6 +95,7 @@
 		<div id="header-title">OverRustle VODs</div>
 		<div id="header-links">
 			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch VOD url"></div>
+			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch/Youtube link"></div>
 			<div><input id="customUrlButton" value="Submit" onclick="vodURL(document.getElementById('customUrlText').value)" type="button"></div>
 			<div><a href="https://www.destiny.gg">Destiny.gg</a></div>
 			<div><a id="destiny-status" href="https://www.destiny.gg/bigscreen">Destiny is offline.</a></div>

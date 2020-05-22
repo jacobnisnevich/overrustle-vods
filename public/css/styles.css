@@ -65,6 +65,23 @@ body {
 	color: white;
 }
 
+/* Changelog */
+
+#changelog {
+	display: none;
+	color: white;
+	font-size: 20px;
+	width: 60%;
+	margin: 20px auto;
+	position: relative;
+}
+
+#close-changelog-button {
+	position: absolute;
+	right: 1em;
+	cursor: pointer;
+}
+
 /* Page Selector */
 
 #page-selector {

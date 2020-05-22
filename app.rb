@@ -37,6 +37,13 @@ get '/chat' do
   overRustleLogsParser.get_chat.to_json
 end
 
+get '/vidinfo' do
+  if params['id']
+    response = open("https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails" + "&id=" + params['id'] + "&key=" + ENV['YOUTUBE_API_KEY'], "Accept" => "application/json")
+  end
+  response
+end
+
 get '/userinfo' do
   oauth_header = "OAuth " + twitch_token
   expiry = validate_token(oauth_header)

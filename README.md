@@ -25,4 +25,4 @@ ruby app.rb
 
 ## Deploying to Heroku
 
-Deploying to Heroku is pretty straightforward, but you need to add the "TWITCH_CLIENT_ID" and "TWITCH_CLIENT_SECRET" config var in Settings before deploying.
+Deploying to Heroku is pretty straightforward, but you need to add the "TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET" and "YOUTUBE_API_KEY" config vars in Settings before deploying.

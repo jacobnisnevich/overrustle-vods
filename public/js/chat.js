@@ -1,10 +1,11 @@
-var Chat = function(id, player) {
+var Chat = function(id, player, type) {
 	this.videoId = id;
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
 	this.chatDelay = 2;
 	this.previousTimeOffset = -1;
+	this.playerType = type;
 
 	this.previousMessage = '';
 	this.comboCount = 1;
@@ -15,16 +16,28 @@ var Chat = function(id, player) {
 	//   self._parseUserData(JSON.parse(data));
 	// });
 
-	$.get("/vodinfo?id=" + this.videoId, function(vodData) {
+	if (this.playerType === "twitch") {
+		infoUrl = "/vodinfo?id="
+	} else if (this.playerType === "youtube") {
+		infoUrl = "/vidinfo?id="
+	}
+
+	$.get(infoUrl + this.videoId, function(vodData) {
 		self.hReplace = new RegExp('([h])', 'gm');
 		self.mReplace = new RegExp('([m])', 'gm');
 		self.sReplace = new RegExp('([s])', 'gm');
 		data = JSON.parse(vodData)
-		self.recordedTime = moment(data["data"][0]["created_at"]).utc();
-		self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
-		self.duration = moment.duration(self.durationString).asSeconds();
-		self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
-		self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+		if (self.playerType === "twitch") {
+			self.recordedTime = moment(data["data"][0]["created_at"]).utc();
+			self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
+			self.duration = moment.duration(self.durationString).asSeconds();
+			self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
+			self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+		} else if (self.playerType === "youtube") {
+			self.recordedTime = moment(data["items"][0]["liveStreamingDetails"]["actualStartTime"]).utc();
+			self.endTime = moment(data["items"][0]["liveStreamingDetails"]["actualEndTime"]).utc();
+			self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+		}
 		
 		var overrustleLogsDates = [];
 

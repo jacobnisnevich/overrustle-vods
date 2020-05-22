@@ -2,6 +2,7 @@ var globals = {};
 
 $(document).ready(function() {
     var id = getUrlParameter("id");
+    var v = getUrlParameter("v")
     var time = getUrlParameter("t");
     var page = 1;
     globals.sizes = localStorage.getItem('split-sizes');
@@ -13,13 +14,26 @@ $(document).ready(function() {
     }
 
     if (id && time) {
-        loadPlayer(id, time);
+        loadPlayer(id, time, "twitch");
         $("#browse").hide();
         $("#player").show();
+        $("#changelog").hide();
+        playerActive = 1;
     } else if (id && !time) {
-        loadPlayer(id);
+        loadPlayer(id, 0, "twitch");
         $("#browse").hide();
         $("#player").show();
+        loadPlayer(id);
+    } else if (v && time) {
+        loadPlayer(v, time, "youtube");
+        $("#browse").hide();
+        $("#player").show();
+    } else if (v && !time) {
+        loadPlayer(v, 0, "youtube");
+        $("#browse").hide();
+        $("#player").show();
+        $("#changelog").hide();
+        playerActive = 1;
     } else {
         // preloading all vods since twitch api pagination is inconsistent and bad >:(
         loadVODs().then(result => {
@@ -185,19 +199,44 @@ var loadDestinyStatus = function() {
     })
 }
 
-var loadPlayer = function(id, time) {
+var loadPlayer = function(id, time, type) {
     $("#player").css("display", "flex");
 
-    var player = new Twitch.Player("video-player", { video: id , time: time });
-    var chat = new Chat(id, player);
+    if (type === "twitch") {
+        var player = new Twitch.Player("video-player", { video: id , time: time });
+        var chat = new Chat(id, player, type);
+        player.addEventListener("play", function() {
+            chat.startChatStream();
+        });
+    
+        player.addEventListener("pause", function() {
+            chat.pauseChatStream();
+        });
+    } else if (type === "youtube") {
+        var player;
+        var chat;
+        // creating a div to be replaced by yt's iframe
+        replacedDiv = document.createElement('div');
+        replacedDiv.id = "yt-player";
+        document.querySelector("#video-player").appendChild(replacedDiv);
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player("yt-player", { videoId: id , playerVars: {"start": time, "autoplay": 1}});
+            chat = new Chat(id, player, type);
+            player.addEventListener("onStateChange", function(event) {
+                if (event.data == YT.PlayerState.PLAYING) {
+                    chat.startChatStream();
+                } else {
+                    chat.pauseChatStream();
+                }
+            });
+        }
+        // add yt embed api after creating the function so it calls it after loading
+        var tag = document.createElement('script');
 
-    player.addEventListener("play", function() {
-        chat.startChatStream();
-    });
-
-    player.addEventListener("pause", function() {
-        chat.pauseChatStream();
-    });
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
 
     $("body").css("overflow", "hidden");
 }
