@@ -263,6 +263,7 @@ body {
 }
 
 #chat-stream {
+	position: relative;
 	height: -moz-calc(96%);
 	height: -webkit-calc(96%);
 	height: calc(96%);
@@ -341,10 +342,17 @@ body {
 
 /* Special Chat Colors */
 
+#loading-message {
+	text-align: center;
+	position: absolute;
+	top: 0; bottom: 10em; left: 0; right: 0;
+	margin: auto;
+	height: 20px;
+}
+
 #loading-message-1 {
 	font-size: x-large;
 	text-align: center;
-	margin-top: 12em;
 }
 
 #loading-message-2 {
