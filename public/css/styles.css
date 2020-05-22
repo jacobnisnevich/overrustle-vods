@@ -270,7 +270,6 @@ body {
 	background: #080808;
 }
 
-
 .chat-line {
 	clear: both;
 	word-wrap: break-word;
@@ -337,6 +336,10 @@ body {
 }
 
 /* Special Chat Colors */
+
+.loading-message {
+	color: #b002c7 !important;	
+}
 
 .user-Destiny {
 	color: #b91010 !important;

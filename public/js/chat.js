@@ -10,6 +10,12 @@ var Chat = function(id, player, type) {
 	this.previousMessage = '';
 	this.comboCount = 1;
 
+	const cuteEmotes = ['Aslan', 'AYAYA', 'Blubstiny', 'Cutestiny', 'DestiSenpaii', 'FeelsOkayMan', 
+	'FerretLOL', 'FrankerZ', 'Hhhehhehe', 'NOBULLY', 'OhMyDog', 'PepoTurkey',
+	'POTATO', 'Slugstiny', 'SoDoge', 'TeddyPepe', 'widepeepoHappy', 'WOOF',
+	'Wowee', 'YEE', 'YEEHAW', 'ComfyAYA', 'ComfyFerret', 'MiyanoHype',
+	'PepoComfy', 'ComfyDog', 'nathanAYAYA', 'nathanWeeb'];
+
 	var self = this;
 
 	// $.get('/users', function(data) {
@@ -58,11 +64,18 @@ var Chat = function(id, player, type) {
 			overrustleLogsDates.push(overrustleLogsStr);
 		}
 
+		var randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
+
+		loadingEmote = " <div class='emote " + randomEmote + "' title=" + randomEmote + "/>"
+
+		$("#chat-stream").append("<div id='loading-message' class='chat-line'><span class='username loading-message'>Loading!</span> <span class='message'>Please wait " + loadingEmote + "</span></div>");
+
 		$.get("/chat", {
 			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {
 			self.chat = JSON.parse(data);
 			self.startChatStream();
+			$("#loading-message").remove();
 		});
 	});
 
@@ -118,7 +131,7 @@ var Chat = function(id, player, type) {
 	this._renderChatMessage = function(username, message) {
 		var usernameField = "";
 		if (username) {
-			usernameField =  "<span class='username user-" + username + "'>" + username + "</span>: ";
+			usernameField = "<span class='username user-" + username + "'>" + username + "</span>: ";
 		}
 
 		$("#chat-stream").append("<div class='chat-line'>" + 
