@@ -62,11 +62,9 @@
 			var urlCheck = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/gm;
 			var matches = url.matchAll(urlCheck);
 			var matchArray = [...matches];
-			console.log(matchArray)
 			if (matchArray[0][3] === "www.twitch.tv" || matchArray[0][3] === "twitch.tv") {
 				regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
 				replaced = url.match(regex);
-				console.log(replaced);
 				window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&');
 			}
 			if (matchArray[0][3] === "www.youtube.com" || matchArray[0][3] === "www.youtube.com") {
