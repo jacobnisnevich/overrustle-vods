@@ -94,7 +94,7 @@
 	<div id="header" class="shadow">
 		<div id="header-title">OverRustle VODs</div>
 		<div id="header-links">
-			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch VOD url"></div>
+			<div id="changelog-button"><a>Changelog</a></div>
 			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch/Youtube link"></div>
 			<div><input id="customUrlButton" value="Submit" onclick="vodURL(document.getElementById('customUrlText').value)" type="button"></div>
 			<div><a href="https://www.destiny.gg">Destiny.gg</a></div>
@@ -104,6 +104,12 @@
 	</div>
 
 	<div id="body">
+		<div id="changelog" class="view">
+			<div id="close-changelog-button"><span class="octicon octicon-x"></span></div>
+			<div id="changelog-text">
+				2020-05-22: 1. added the ability to watch youtube vods with chat (only works with stream recordings, regular videos won't work) <br>
+			</div>
+		</div>
 		<div id="browse" class="view container">
 			<div id="page-selector">
 				<div id="previous-page-button" class="disabled"><span class="octicon octicon-arrow-left"></span></div>
