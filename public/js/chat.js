@@ -3,7 +3,6 @@ var Chat = function(id, player, type) {
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
-	this.chatDelay = 2;
 	this.previousTimeOffset = -1;
 	this.playerType = type;
 
@@ -207,7 +206,7 @@ var Chat = function(id, player, type) {
 
 			self.previousTimeOffset = currentTimeOffset;
 		}
-	}, 1000);
+	}, 500);
 };
 
 // From https://stackoverflow.com/a/3890175
