@@ -121,8 +121,16 @@ var Chat = function(id, player, type) {
 		$("head").append(styleString);
 	};
 
+	this._htmlEncode = function(s) {
+		return $('<div>').text(s).html();
+	};
+
+	this._htmlDecode = function(s) {
+		return $('<div>').html(s).text();
+	};
+
 	this._formatMessage = function(message) {
-		var messageReplaced = message.linkify();
+		var messageReplaced = this._htmlEncode(message).linkify();
 
 		function replacer(p1) {
 			return self._generateDestinyEmoteImage(p1.replace(/ /g,''));
@@ -156,7 +164,7 @@ var Chat = function(id, player, type) {
 	};
 
 	this._greenTextify = function(message) {
-		if (message[0] === '>') {
+		if (this._htmlDecode(message)[0] === '>') {
 			return "<span class='greentext'>" + message + "</span>";
 		} else {
 			return message;
