@@ -1,13 +1,28 @@
-var Chat = function(id, player) {
+var Chat = function(id, player, type) {
 	this.videoId = id;
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
-	this.chatDelay = 2;
 	this.previousTimeOffset = -1;
+	this.playerType = type;
 
 	this.previousMessage = '';
 	this.comboCount = 1;
+
+	const cuteEmotes = ['ASLAN', 'AYAYA', 'Blubstiny', 'Cutestiny', 'DestiSenpaii', 'FeelsOkayMan', 
+	'FerretLOL', 'FrankerZ', 'Hhhehhehe', 'NOBULLY', 'OhMyDog', 'PepoTurkey',
+	'POTATO', 'Slugstiny', 'SoDoge', 'TeddyPepe', 'widepeepoHappy', 'WOOF',
+	'Wowee', 'YEE', 'YEEHAW', 'ComfyAYA', 'ComfyFerret', 'MiyanoHype',
+	'PepoComfy', 'ComfyDog', 'nathanAYAYA', 'nathanWeeb'];
+
+	const memeMessages = ["<div class='emote YEE' title=YEE></div> neva lie, <div class='emote YEE' title=YEE></div> neva, <div class='emote YEE' title=YEE></div> neva lie.",
+						"Don't believe his lies.", "You could've played that better.", "Dishonorable PVP <div class='emote OverRustle' title=OverRustle></div>", 
+						"how do not have any cups in your apartment wtf",
+						"destiny before you have sex are you supposed to have a boner before the girl sees it?", 
+						"Well RightToBearArmsLOL, honestly, I think I might talk to Steven about your odd rhetoric.",
+						"BAR BAR BAR", "he handles my", "nukesys", "Did I shield in Lords Mobile?", "THE TIME FOR CHILLING HAS PASSED",
+						"OK HERES THE PLAN", "NO TEARS NOW, ONLY DREAMS", "How did I end up cleaning carpets? <div class='emote LeRuse' title=LeRuse></div>",
+						"B O D G A Y", "JIMMY NOOOO", "<div class='emote nathanTiny2' title=nathanTiny2></div>", ">more like", "Chat, don't woof."];
 
 	var self = this;
 
@@ -15,29 +30,63 @@ var Chat = function(id, player) {
 	//   self._parseUserData(JSON.parse(data));
 	// });
 
-	// sending a client-id header by default
-	$.ajaxSetup({headers: {"Client-ID" : "88bxd2ntyahw9s8ponrq2nwluxx17q"}});
+	if (this.playerType === "twitch") {
+		infoUrl = "/vodinfo?id="
+	} else if (this.playerType === "youtube") {
+		infoUrl = "/vidinfo?id="
+	}
 
-	$.get("https://api.twitch.tv/helix/videos?id=" + this.videoId, function(vodData) {
-		self.recordedTime = moment(vodData["data"][0]["created_at"]).utc();
+	$.get(infoUrl + this.videoId, function(vodData) {
+		self.hReplace = new RegExp('([h])', 'gm');
+		self.mReplace = new RegExp('([m])', 'gm');
+		self.sReplace = new RegExp('([s])', 'gm');
+		data = JSON.parse(vodData)
+		if (self.playerType === "twitch") {
+			self.recordedTime = moment(data["data"][0]["created_at"]).utc();
+			self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
+			self.duration = moment.duration(self.durationString).asSeconds();
+			self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
+			self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+		} else if (self.playerType === "youtube") {
+			self.recordedTime = moment(data["items"][0]["liveStreamingDetails"]["actualStartTime"]).utc();
+			self.endTime = moment(data["items"][0]["liveStreamingDetails"]["actualEndTime"]).utc();
+			self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+		}
+		
+		var overrustleLogsDates = [];
 
-		// https://dgg.overrustlelogs.net/Destinygg chatlog/March 2016/2016-03-23
-		var overrustleLogsMonth = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
-			self.recordedTime.format("MMMM") + "%20" + 
-			self.recordedTime.format("YYYY") + "/" + 
-			self.recordedTime.format("YYYY") + "-" +
-			self.recordedTime.format("MM") + "-";
+		for (let i = 0; i <= self.difference; i++) {
+			if (self.recordedTime.format("MM") === self.recordedTime.clone().add(i, 'days').format("MM")) {
+				var overrustleLogsStr = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
+					self.recordedTime.format("MMMM") + "%20" + 
+					self.recordedTime.format("YYYY") + "/" + 
+					self.recordedTime.format("YYYY") + "-" +
+					self.recordedTime.format("MM") + "-" + self.recordedTime.clone().add(i, 'days').format("DD") + ".txt";
+			} else {
+				var overrustleLogsStr = "https://dgg.overrustlelogs.net/Destinygg%20chatlog/" + 
+					self.recordedTime.clone().add(i, 'days').format("MMMM") + "%20" + 
+					self.recordedTime.clone().add(i, 'days').format("YYYY") + "/" + 
+					self.recordedTime.clone().add(i, 'days').format("YYYY") + "-" +
+					self.recordedTime.clone().add(i, 'days').format("MM") + "-" + self.recordedTime.clone().add(i, 'days').format("DD") + ".txt";
+			}
+			overrustleLogsDates.push(overrustleLogsStr);
+		}
 
-		var overrustleLogsDates = [
-			overrustleLogsMonth + self.recordedTime.format("DD") + ".txt",
-			overrustleLogsMonth + self.recordedTime.clone().add(1, 'days').format("DD") + ".txt"
-		];
-			
+		var randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
+		var randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];
+
+		loadingEmote = " <div class='emote " + randomEmote + "' title=" + randomEmote + "/>"
+
+		$("#chat-stream").append("<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Loading logs!</span></div>"
+		+ "<div id='loading-message-2' class='chat-line'><span class='message'>Please wait " + loadingEmote + "</span></div>"
+		+ "<div id='loading-message-3' class='chat-line'><span class='message'>" + randomMessage + "</span></div>" + "</div>");
+
 		$.get("/chat", {
 			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {
 			self.chat = JSON.parse(data);
 			self.startChatStream();
+			$("#loading-message").remove();
 		});
 	});
 
@@ -93,7 +142,7 @@ var Chat = function(id, player) {
 	this._renderChatMessage = function(username, message) {
 		var usernameField = "";
 		if (username) {
-			usernameField =  "<span class='username user-" + username + "'>" + username + "</span>: ";
+			usernameField = "<span class='username user-" + username + "'>" + username + "</span>: ";
 		}
 
 		$("#chat-stream").append("<div class='chat-line'>" + 
@@ -132,7 +181,7 @@ var Chat = function(id, player) {
 	window.setInterval(function() {
 		if (self.status == "running" && self.chat) {
 			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
-			var utcFormat = self.recordedTime.clone().add(self.chatDelay + currentTimeOffset, 's').format().replace("+00:00", "Z");
+			var utcFormat = self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset, 's').format().replace("+00:00", "Z");
 			
 			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
 				self.chat[utcFormat].forEach(function(chatLine) {
@@ -152,12 +201,12 @@ var Chat = function(id, player) {
 
 				$("#chat-stream").animate({ 
 					scrollTop: $("#chat-stream").prop("scrollHeight")
-				}, 1000);
+				}, 0);
 			}
 
 			self.previousTimeOffset = currentTimeOffset;
 		}
-	}, 1000);
+	}, 500);
 };
 
 // From https://stackoverflow.com/a/3890175

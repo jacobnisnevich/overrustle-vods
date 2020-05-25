@@ -1,16 +1,43 @@
+var globals = {};
+
 $(document).ready(function() {
     var id = getUrlParameter("id");
+    var v = getUrlParameter("v")
     var time = getUrlParameter("t");
     var page = 1;
+    var playerActive = 0;
+    globals.sizes = localStorage.getItem('split-sizes');
+
+    if (globals.sizes) {
+        globals.sizes = JSON.parse(globals.sizes);
+    } else {
+        globals.sizes = [80, 20];
+    }
 
     if (id && time) {
-        loadPlayer(id, time);
+        loadPlayer(id, time, "twitch");
         $("#browse").hide();
         $("#player").show();
+        $("#changelog").hide();
+        playerActive = 1;
     } else if (id && !time) {
-        loadPlayer(id);
+        loadPlayer(id, 0, "twitch");
         $("#browse").hide();
         $("#player").show();
+        $("#changelog").hide();
+        playerActive = 1;
+    } else if (v && time) {
+        loadPlayer(v, time, "youtube");
+        $("#browse").hide();
+        $("#player").show();
+        $("#changelog").hide();
+        playerActive = 1;
+    } else if (v && !time) {
+        loadPlayer(v, 0, "youtube");
+        $("#browse").hide();
+        $("#player").show();
+        $("#changelog").hide();
+        playerActive = 1;
     } else {
         // preloading all vods since twitch api pagination is inconsistent and bad >:(
         loadVODs().then(result => {
@@ -21,12 +48,35 @@ $(document).ready(function() {
         });
         $("#player").hide();
         $("#browse").show();
+        $("#changelog").hide();
+        playerActive = 0;
     }
 
-    $("#player").split({
-        orientation: 'vertical',
-        limit: 10,
-        position: '80%'
+    globals.splitInstance = Split(['#video-player', '#chat-container'], {
+        sizes: globals.sizes,
+        gutterSize: 8,
+        minSize: 200,
+        cursor: 'col-resize',
+        onDragEnd: function(sizes) {
+            localStorage.setItem('split-sizes', JSON.stringify(sizes));
+        }
+    });
+
+    $("#changelog-button").click(function() {
+        $("#changelog").show();
+        $("#player").hide();
+        $("#browse").hide();
+    });
+
+    $("#close-changelog-button").click(function() {
+        $("#changelog").hide();
+        if (playerActive === 1) {
+            $("#player").show();
+            $("#browse").hide();
+        } else {
+            $("#player").hide();
+            $("#browse").show();
+        }
     });
 
     $("#next-page-button").click(function() {
@@ -73,6 +123,52 @@ $(document).ready(function() {
         }
     });
 
+    $("#dec-delay-button").click(function() {
+        delay = Number($("#delay").text());
+        if (delay >= 1) {
+            delay -= 1;
+            $("#delay").text(delay);
+        }
+    });
+
+    $("#inc-delay-button").click(function() {
+        delay = Number($("#delay").text()) + 1;
+        $("#delay").text(delay);
+    });
+
+    $("#switch-sides-button").click(function() {
+        if (document.getElementById("player").style["flex-direction"] === "row") {
+            document.getElementById("player").style["flex-direction"] = "row-reverse";
+            globals.splitInstance.destroy();
+            globals.splitInstance = Split(['#video-player', '#chat-container'], {
+                sizes: globals.sizes,
+                gutterSize: 8,
+                minSize: 200,
+                cursor: 'col-resize',
+                onDragEnd: function(sizes) {
+                    globals.sizes = sizes;
+                    localStorage.setItem('split-sizes', JSON.stringify(sizes));
+                }
+            });
+            return true;
+        }
+        if (document.getElementById("player").style["flex-direction"] === "row-reverse") {
+            document.getElementById("player").style["flex-direction"] = "row";
+            globals.splitInstance.destroy();
+            globals.splitInstance = Split(['#video-player', '#chat-container'], {
+                sizes: globals.sizes,
+                gutterSize: 8,
+                minSize: 200,
+                cursor: 'col-resize',
+                onDragEnd: function(sizes) {
+                    globals.sizes = sizes;
+                    localStorage.setItem('split-sizes', JSON.stringify(sizes));
+                }
+            });
+            return true;
+        }
+    });
+
     // Check if Destiny is online every 5 minutes
     setInterval(loadDestinyStatus(), 300000);
 
@@ -91,15 +187,15 @@ var allVODs = [];
 
 async function loadVODs() {
     vodArray = [];
-    var destinyVODsURL = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=100&type=archive";
-    let response = await fetch(destinyVODsURL, { headers: { 'Client-ID': clientID}});
+    var destinyVODsURL = "/vodinfo?user_id=" + destinyUserID + "&first=100&type=archive";
+    let response = await fetch(destinyVODsURL);
     let data = await response.json();
     pageCursor = data.pagination.cursor;
     vodArray.push(...data.data);
     // if there are more than 100 vods, check next page and add everything there to the array; repeat until done
     while (data.data.length === 100 && pageCursor != ("" || null)) {
-        destinyVODsURL = "https://api.twitch.tv/helix/videos/?user_id=" + destinyUserID + "&first=100&type=archive&after=" + pageCursor;
-        response = await fetch(destinyVODsURL, { headers: { 'Client-ID': clientID}});
+        destinyVODsURL = "/vodinfo?user_id=" + destinyUserID + "&first=100&type=archive&after=" + pageCursor;
+        response = await fetch(destinyVODsURL);
         data = await response.json();
         pageCursor = data.pagination.cursor;
         vodArray.push(...data.data);
@@ -111,14 +207,11 @@ var destinyUserID = 18074328;
 
 var pageCursor = 0;
 
-var clientID = "88bxd2ntyahw9s8ponrq2nwluxx17q";
-
-$.ajaxSetup({headers: {"Client-ID" : clientID}});
-
 var loadDestinyStatus = function() {
-    var destinyStatusUrl = "https://api.twitch.tv/helix/streams?user_login=destiny";
+    var destinyStatusUrl = "/userinfo?user_login=destiny";
 
-    $.get(destinyStatusUrl, function(data) {
+    $.get(destinyStatusUrl, function(userdata) {
+        data = JSON.parse(userdata)
         if (data.data === null || data.data.length === 0) {
             $("#destiny-status").text("Destiny is offline.");
             $("#destiny-status").css("color", "#a70000");
@@ -129,19 +222,44 @@ var loadDestinyStatus = function() {
     })
 }
 
-var loadPlayer = function(id, time) {
+var loadPlayer = function(id, time, type) {
     $("#player").css("display", "flex");
 
-    var player = new Twitch.Player("video-player", { video: id , time: time });
-    var chat = new Chat(id, player);
+    if (type === "twitch") {
+        var player = new Twitch.Player("video-player", { video: id , time: time });
+        var chat = new Chat(id, player, type);
+        player.addEventListener("play", function() {
+            chat.startChatStream();
+        });
+    
+        player.addEventListener("pause", function() {
+            chat.pauseChatStream();
+        });
+    } else if (type === "youtube") {
+        var player;
+        var chat;
+        // creating a div to be replaced by yt's iframe
+        replacedDiv = document.createElement('div');
+        replacedDiv.id = "yt-player";
+        document.querySelector("#video-player").appendChild(replacedDiv);
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player("yt-player", { videoId: id , playerVars: {"start": time, "autoplay": 1}});
+            chat = new Chat(id, player, type);
+            player.addEventListener("onStateChange", function(event) {
+                if (event.data == YT.PlayerState.PLAYING) {
+                    chat.startChatStream();
+                } else {
+                    chat.pauseChatStream();
+                }
+            });
+        }
+        // add yt embed api after creating the function so it calls it after loading
+        var tag = document.createElement('script');
 
-    player.addEventListener("play", function() {
-        chat.startChatStream();
-    });
-
-    player.addEventListener("pause", function() {
-        chat.pauseChatStream();
-    });
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
 
     $("body").css("overflow", "hidden");
 }
