@@ -80,25 +80,25 @@
 	<script>
 		// click button on "Enter" press
 		// stolen from https://stackoverflow.com/questions/155188/trigger-a-button-click-with-javascript-on-the-enter-key-in-a-text-box
-		window.onload = function () {
+		$(document).ready(function (){
 			document.getElementById("customUrlText").addEventListener("keyup", function(event) {
 				event.preventDefault();
 				if (event.keyCode === 13) {
 					document.getElementById("customUrlButton").click();
-				};
+				}
 			});
-		};
+		});
 	</script>
 
 	<script>
 
-		window.onload = function () {
+		$(document).ready(function () {
 			if (localStorage.getItem('lineLimit')) {
         		$("#lineLimit").val(localStorage.getItem('lineLimit'));
     		} else {
         		$("#lineLimit").val(300);
     		}
-		};
+		});
 
 		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
 		function showSettings() {
