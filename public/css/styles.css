@@ -404,11 +404,32 @@ body {
 }
 
 .user-Destiny {
-	color: #b91010 !important;
+	color: #EE1F1F !important;
 }
 
-.user-Bot_v2_Beta, .user-Bot, .user-Logs {
-	color: #e79015 !important;
+.user-Bot, .user-Logs {
+	color: #0088CC !important;
+}
+
+.user-RightToBearArmsLOL, .user-Cake, .user-CeneZa, .user-LinusRed {
+	color: #DB4C1C !important;
+}
+
+.user-Dan, .user-MrMouton, .user-RNA, .user-RenegadeZero, .user-LilyPichu, .user-ErisAnn {
+	color: #E79015 !important;
+}
+
+.chat-line[data-username="Broadcast"] {
+    color: transparent !important;
+}
+
+.chat-line[data-username="Broadcast"] .username {
+    display: none !important;
+}
+
+.chat-line[data-username="Broadcast"] .message {
+    color: #EDEA12 !important;
+    font-size: 1.2em !important;
 }
 
 /* Scroll Bar Style */
