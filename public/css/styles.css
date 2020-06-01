@@ -65,6 +65,10 @@ body {
 	color: white;
 }
 
+#git-buttons .github-button{
+	display: inline-block;
+}
+
 /* Changelog */
 
 #changelog {
