@@ -144,7 +144,7 @@
 			<div id="changelog-text">
 				2020-06-01: <br>
 				1. experimental change to chat syncing (thanks to Jabelonske for the ideas Wowee) <br>
-				2. change max lines in chat
+				2. change max lines in chat <br>
 				2020-05-26: <br>
 				1. converting special characters in messages to html now (some messages disappeared before) !im not sure this worked! <br>
 				2020-05-24: <br>
@@ -171,14 +171,16 @@
 						<div id="delay-container">Delay: <span id="delay">2</span> sec.</div>
 						<div id="inc-delay-button"><span class="octicon octicon-arrow-right"></span></div>
 					</div>
-					<div class="settings-dropdown">
-						<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
-						<div id="settings-content" class="class-settings-content">
-							<label id="lineLimit-text" for="lineLimit">Max. lines in chat (0 for unlim.):</label>
-							<input type="text" id="lineLimit" name="lineLimit" onchange="updateLineLimit()">
+					<div id="settings">
+						<div class="settings-dropdown">
+							<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
+							<div id="settings-content" class="class-settings-content">
+								<label id="lineLimit-text" for="lineLimit">Max. lines in chat (0 for unlim.):</label>
+								<input type="text" id="lineLimit" name="lineLimit" onchange="updateLineLimit()">
+							</div>
 						</div>
+						<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
 					</div>
-					<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
 				</div>
 				<div id="chat-stream"></div>
 			</div>

@@ -258,10 +258,14 @@ body {
 	text-align: center;
 }
 
+#settings {
+	display: flex;
+}
+
 .settings-dropdown {
 	position: relative;
 	display: inline-block;
-	padding-left: 45%;
+	padding-right: 25%;
 }
   
 .class-settings-content {
