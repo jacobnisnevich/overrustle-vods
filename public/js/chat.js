@@ -152,12 +152,12 @@ var Chat = function(id, player, type) {
 	this._renderChatMessage = function(username, message) {
 		var usernameField = "";
 		if (username) {
-			usernameField = "<span class='username user-" + username + "'>" + username + "</span>: ";
+			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
 		}
 
-		$("#chat-stream").append("<div class='chat-line'>" + 
+		$("#chat-stream").append("<div class='chat-line' data-username='" + username + "'>" + 
 			usernameField + 
-			"<span class='message'>" +
+			"<span class='message' onclick='document._removeFocusRule()'>" +
 		  message + "</span></div>");		
 	}
 

@@ -305,6 +305,10 @@ body {
 	background: #080808;
 }
 
+.hide-on-focus .chat-line {
+	opacity: 0.3;
+}
+
 .chat-line {
 	clear: both;
 	word-wrap: break-word;
