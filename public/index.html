@@ -89,6 +89,43 @@
 		};
 	</script>
 
+	<script>
+
+		window.onload = function () {
+			if (localStorage.getItem('lineLimit')) {
+        		$("#lineLimit").val(localStorage.getItem('lineLimit'));
+    		} else {
+        		$("#lineLimit").val(300);
+    		}
+		};
+
+		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
+		function showSettings() {
+			document.getElementById("settings-content").classList.toggle("show");
+		};
+
+		$(document).on('click', 'settings-button-content', function (e) {
+			e.stopPropagation();
+		});
+
+		window.onclick = function(event) {
+  			if (!event.target.matches('#settings-button')) {
+    			var dropdowns = document.getElementsByClassName("settings-button-content");
+    			var i;
+    			for (i = 0; i < dropdowns.length; i++) {
+      				var openDropdown = dropdowns[i];
+      				if (openDropdown.classList.contains('show')) {
+        				openDropdown.classList.remove('show');
+      				}
+    			}
+  			}
+		}
+
+		function updateLineLimit() {
+			localStorage.setItem('lineLimit', $("#lineLimit").val());
+		}
+	</script>
+
 	<div id="header" class="shadow">
 		<div id="header-title">OverRustle VODs</div>
 		<div id="header-links">
@@ -106,7 +143,8 @@
 			<div id="close-changelog-button"><span class="octicon octicon-x"></span></div>
 			<div id="changelog-text">
 				2020-06-01: <br>
-				1. experimental change to chat syncing (thanks to Jabelonske for the ideas Wowee)<br>
+				1. experimental change to chat syncing (thanks to Jabelonske for the ideas Wowee) <br>
+				2. change max lines in chat
 				2020-05-26: <br>
 				1. converting special characters in messages to html now (some messages disappeared before) !im not sure this worked! <br>
 				2020-05-24: <br>
@@ -132,6 +170,13 @@
 						<div id="dec-delay-button"><span class="octicon octicon-arrow-left"></span></div>
 						<div id="delay-container">Delay: <span id="delay">2</span> sec.</div>
 						<div id="inc-delay-button"><span class="octicon octicon-arrow-right"></span></div>
+					</div>
+					<div class="settings-dropdown">
+						<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
+						<div id="settings-content" class="class-settings-content">
+							<label id="lineLimit-text" for="lineLimit">Max. lines in chat (0 for unlim.):</label>
+							<input type="text" id="lineLimit" name="lineLimit" onchange="updateLineLimit()">
+						</div>
 					</div>
 					<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
 				</div>

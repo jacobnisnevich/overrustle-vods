@@ -246,6 +246,13 @@ var Chat = function(id, player, type) {
 
 				self.actualPreviousTimeOffset = currentTimeOffset;
 
+				if ($("#lineLimit").val() != ("0" || null || "") ) {
+					if ($("#chat-stream").children().length > $("#lineLimit").val()) {
+						removeLine = "#chat-stream div:lt(" + ($("#chat-stream").children().length - $("#lineLimit").val()) + ")";
+						$(removeLine).remove();
+					}
+				}
+
 			}
 
 			self.previousTimeOffset = currentTimeOffset;
