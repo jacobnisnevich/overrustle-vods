@@ -149,14 +149,18 @@ var Chat = function(id, player, type) {
 			"<span class='combo'>C-C-C-COMBO</span>";
 	}
 
-	this._renderChatMessage = function(username, message) {
+	this._renderChatMessage = function(time, username, message) {
 		var usernameField = "";
+		var timeFormatted = "";
+		if (time) {
+			timeFormatted = "<span class='time'>" + moment(time).format("HH:mm") + " </span>";
+		}
 		if (username) {
 			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
 		}
 
 		$("#chat-stream").append("<div class='chat-line' data-username='" + username + "'>" + 
-			usernameField + 
+			timeFormatted + usernameField + 
 			"<span class='message' onclick='document._removeFocusRule()'>" +
 		  message + "</span></div>");		
 	}
@@ -230,10 +234,10 @@ var Chat = function(id, player, type) {
 							self.comboCount++;
 							$('#chat-stream .chat-line').last().remove();
 							var comboMessage = self._renderComboMessage(self.previousMessage, self.comboCount);
-							self._renderChatMessage(null, comboMessage);
+							self._renderChatMessage(null, null, comboMessage);
 						} else {
 							self.comboCount = 1;
-							self._renderChatMessage(chatLine.username, self._formatMessage(chatLine.message));
+							self._renderChatMessage(element, chatLine.username, self._formatMessage(chatLine.message));
 						}
 	
 						self.previousMessage = chatLine.message;

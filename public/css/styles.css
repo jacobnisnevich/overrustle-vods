@@ -282,7 +282,7 @@ body {
 	max-width: 150px;
 }
 
-#lineLimit-text {
+#lineLimit-text, #showTime-text {
 	font-size: 16px;
 }
 
@@ -316,6 +316,13 @@ body {
 	vertical-align: middle;
 	line-height: 1.5em;
 	color: grey;
+}
+
+.chat-line .time {
+	display: none;
+	font-size: 0.8em;
+    color: #414141;
+    padding-right: .3em;
 }
 
 .chat-line .username {

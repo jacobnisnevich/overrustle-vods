@@ -91,13 +91,21 @@
 	</script>
 
 	<script>
-
 		$(document).ready(function () {
+			$("head").append("<style id='timeStyle'></style>");
+
 			if (localStorage.getItem('lineLimit')) {
         		$("#lineLimit").val(localStorage.getItem('lineLimit'));
     		} else {
-        		$("#lineLimit").val(300);
-    		}
+				$("#lineLimit").val(300);
+				localStorage.setItem('lineLimit', $("#lineLimit").val());
+			}
+			
+			if (localStorage.getItem('showTime') === true) {
+				$("#showTime").prop('checked', true);
+			} else {
+				$("#showTime").prop('checked', false);
+			}
 		});
 
 		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
@@ -124,6 +132,16 @@
 
 		function updateLineLimit() {
 			localStorage.setItem('lineLimit', $("#lineLimit").val());
+		}
+
+		function updateShowTime() {
+			state = $("#showTime").is(':checked');
+			localStorage.setItem('showTime', state);
+			if (state) {
+				document.getElementById("timeStyle").sheet.insertRule('.chat-line .time {display: inline !important;}');
+			} else {
+				document.getElementById("timeStyle").sheet.deleteRule(0);
+			}
 		}
 	</script>
 
@@ -179,7 +197,9 @@
 							<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
 							<div id="settings-content" class="class-settings-content">
 								<label id="lineLimit-text" for="lineLimit">Max. lines in chat (0 for unlim.):</label>
-								<input type="text" id="lineLimit" name="lineLimit" onchange="updateLineLimit()">
+								<input type="text" id="lineLimit" name="lineLimit" oninput="updateLineLimit()">
+								<label id="showTime-text" for="showTime">Show time:</label>
+								<input type="checkbox" id="showTime" name="showTime" onclick="updateShowTime()">
 							</div>
 						</div>
 						<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
