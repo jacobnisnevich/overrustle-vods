@@ -2,19 +2,20 @@ $(document).ready(function() {
 
 		//stolen from dgg chat Blesstiny
 		this.focused = "";
+		$("head").append("<style id='focusStyle'></style>");
 		var self = this;
-
+		
 		this._addFocusRule = function(username) {
 			self._removeFocusRule();
 			let rule = `.chat-line[data-username="${username}"]{opacity:1 !important;}`;
-			window.document.styleSheets[2].insertRule(rule);
+			document.getElementById("focusStyle").sheet.insertRule(rule);
 			self.focused = username;
 			self._redraw();
 		}
 
 		this._removeFocusRule = function() {
 			if (self.focused) {
-				window.document.styleSheets[2].deleteRule(0);
+				document.getElementById("focusStyle").sheet.deleteRule(0);
 				self.focused = "";
 				self._redraw();
 			}
