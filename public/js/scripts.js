@@ -228,11 +228,11 @@ var loadPlayer = function(id, time, type) {
     if (type === "twitch") {
         var player = new Twitch.Player("video-player", { video: id , time: time });
         var chat = new Chat(id, player, type);
-        player.addEventListener("play", function() {
+        player.addEventListener(Twitch.Player.PLAYING, function() {
             chat.startChatStream();
         });
     
-        player.addEventListener("pause", function() {
+        player.addEventListener(Twitch.Player.PAUSE, function() {
             chat.pauseChatStream();
         });
     } else if (type === "youtube") {

@@ -212,7 +212,7 @@ var Chat = function(id, player, type) {
 				
 				timestamps.push(self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
 
-				if (timeDifference > 1) {
+				if (timeDifference > 1 && timeDifference < 30) {
 					for (let i = 1; i < timeDifference; i++) {
 						timestamps.push(timestamp = self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
 					};
