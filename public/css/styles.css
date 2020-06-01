@@ -426,15 +426,15 @@ body {
 	color: #E79015 !important;
 }
 
-.chat-line[data-username="Broadcast"], .chat-line[data-username="Subscriber"] {
+.chat-line[data-username="Broadcast"], .chat-line[data-username="Subscriber"], .chat-line[data-username="SubscriberMessage"] {
     color: transparent !important;
 }
 
-.chat-line[data-username="Broadcast"] .username, .chat-line[data-username="Subscriber"] .username {
+.chat-line[data-username="Broadcast"] .username, .chat-line[data-username="Subscriber"] .username, .chat-line[data-username="SubscriberMessage"] .username {
     display: none !important;
 }
 
-.chat-line[data-username="Broadcast"] .message, .chat-line[data-username="Subscriber"] .message {
+.chat-line[data-username="Broadcast"] .message, .chat-line[data-username="Subscriber"] .message, .chat-line[data-username="SubscriberMessage"] .message {
 	background-color: #151515;
     color: #EDEA12 !important;
     font-size: 1.2em !important;
