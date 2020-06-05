@@ -65,6 +65,10 @@ body {
 	color: white;
 }
 
+#git-buttons .github-button{
+	display: inline-block;
+}
+
 /* Changelog */
 
 #changelog {
@@ -258,7 +262,37 @@ body {
 	text-align: center;
 }
 
-#dec-delay-button, #inc-delay-button, #switch-sides-button {
+#settings {
+	display: flex;
+}
+
+.settings-dropdown {
+	position: relative;
+	display: inline-block;
+	padding-right: 25%;
+}
+  
+.class-settings-content {
+	z-index: 9999;
+	display: none;
+	position: absolute;
+	right: 0;
+	background-color: #080808;
+	overflow: auto;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+#lineLimit {
+	max-width: 150px;
+}
+
+#lineLimit-text, #showTime-text {
+	font-size: 16px;
+}
+
+.show {display: block;}
+
+#dec-delay-button, #inc-delay-button, #switch-sides-button, #settings-button {
 	cursor: pointer;
 }
 
@@ -275,6 +309,10 @@ body {
 	background: #080808;
 }
 
+.hide-on-focus .chat-line {
+	opacity: 0.3;
+}
+
 .chat-line {
 	clear: both;
 	word-wrap: break-word;
@@ -282,6 +320,13 @@ body {
 	vertical-align: middle;
 	line-height: 1.5em;
 	color: grey;
+}
+
+.chat-line .time {
+	display: none;
+	font-size: 0.8em;
+    color: #414141;
+    padding-right: .3em;
 }
 
 .chat-line .username {
@@ -370,11 +415,33 @@ body {
 }
 
 .user-Destiny {
-	color: #b91010 !important;
+	color: #EE1F1F !important;
 }
 
-.user-Bot_v2_Beta, .user-Bot, .user-Logs {
-	color: #e79015 !important;
+.user-Bot, .user-Logs {
+	color: #0088CC !important;
+}
+
+.user-RightToBearArmsLOL, .user-Cake, .user-CeneZa, .user-LinusRed {
+	color: #DB4C1C !important;
+}
+
+.user-Dan, .user-MrMouton, .user-RNA, .user-RenegadeZero, .user-LilyPichu, .user-ErisAnn {
+	color: #E79015 !important;
+}
+
+.chat-line[data-username="Broadcast"], .chat-line[data-username="Subscriber"], .chat-line[data-username="SubscriberMessage"] {
+    color: transparent !important;
+}
+
+.chat-line[data-username="Broadcast"] .username, .chat-line[data-username="Subscriber"] .username, .chat-line[data-username="SubscriberMessage"] .username {
+    display: none !important;
+}
+
+.chat-line[data-username="Broadcast"] .message, .chat-line[data-username="Subscriber"] .message, .chat-line[data-username="SubscriberMessage"] .message {
+	background-color: #151515;
+    color: #EDEA12 !important;
+    font-size: 1.2em !important;
 }
 
 /* Scroll Bar Style */
