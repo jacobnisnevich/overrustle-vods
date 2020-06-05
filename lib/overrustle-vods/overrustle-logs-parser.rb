@@ -1,4 +1,5 @@
 require 'time'
+require 'cgi'
 
 class OverRustleLogsParser
   def initialize(urls)
@@ -27,7 +28,7 @@ class OverRustleLogsParser
 
         timestamp = Time.parse(chat_line[1, 23]).iso8601
         username = chat_line[26, index - 26]
-        message = chat_line[index + 2, length - (index + 2)]
+        message = CGI.escapeHTML(chat_line[index + 2, length - (index + 2)])
 
         if chat_hash[timestamp].nil?
           chat_hash[timestamp] = []
