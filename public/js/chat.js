@@ -132,7 +132,7 @@ var Chat = function(id, player, type) {
 	};
 
 	this._formatMessage = function(message) {
-		var messageReplaced = this._htmlEncode(message).linkify();
+		var messageReplaced = this._htmlDecode(message).linkify();
 
 		function replacer(p1) {
 			return self._generateDestinyEmoteImage(p1.replace(/ /g,''));
