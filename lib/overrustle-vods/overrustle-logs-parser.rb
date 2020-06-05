@@ -1,5 +1,6 @@
 require 'time'
 require 'cgi'
+require 'open-uri'
 
 class OverRustleLogsParser
   def initialize(urls)
@@ -7,7 +8,7 @@ class OverRustleLogsParser
 
     urls.each do |url|
       begin
-        page = Nokogiri::HTML(open(url), nil, Encoding::UTF_8.to_s)
+        page = open(url).read
         @pages.push(page)
       rescue OpenURI::HTTPError
         p 'Error: page not found'
@@ -19,7 +20,7 @@ class OverRustleLogsParser
     chat_hashes = []
 
     @pages.each do |page|
-      chat_array = page.text.split("\n")
+      chat_array = page.split("\n")
       chat_hash = {}
 
       chat_array.each do |chat_line|
