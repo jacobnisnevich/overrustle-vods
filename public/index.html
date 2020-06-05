@@ -49,15 +49,6 @@
 	</script>
 
 	<script>
-		// adding a random number to the emote stylesheet url so that we avoid caching and (hopefully) always get the most recent version
-		// from https://stackoverflow.com/questions/58972512/linking-a-css-file-with-version-number-for-cache-busting
-		window.addEventListener('load', function() {
-  			var head = document.querySelector('head');
-  			head.innerHTML += '<link rel="stylesheet" href="https://cdn.destiny.gg/emotes/emotes.css?_=' + Math.random() + '" type="text/css">';
-		});
-	</script>
-
-	<script>
 		// detecting if url is yt or twitch
 		function vodURL(url) {
 			var urlCheck = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/gm;
@@ -75,9 +66,7 @@
 				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&');
 			}
 		};
-	</script>
 
-	<script>
 		// click button on "Enter" press
 		// stolen from https://stackoverflow.com/questions/155188/trigger-a-button-click-with-javascript-on-the-enter-key-in-a-text-box
 		$(document).ready(function (){
@@ -88,11 +77,10 @@
 				}
 			});
 		});
-	</script>
-
-	<script>
+		
 		$(document).ready(function () {
 			$("head").append("<style id='timeStyle'></style>");
+			$("head").append('<link rel="stylesheet" href="https://cdn.destiny.gg/emotes/emotes.css?_=' + Math.random() + '" type="text/css"/>');
 
 			if (localStorage.getItem('lineLimit')) {
         		$("#lineLimit").val(localStorage.getItem('lineLimit'));
@@ -101,11 +89,12 @@
 				localStorage.setItem('lineLimit', $("#lineLimit").val());
 			}
 			
-			if (localStorage.getItem('showTime') === true) {
+			if (localStorage.getItem('showTime') === 'true') {
 				$("#showTime").prop('checked', true);
 			} else {
 				$("#showTime").prop('checked', false);
 			}
+			updateShowTime();
 		});
 
 		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown

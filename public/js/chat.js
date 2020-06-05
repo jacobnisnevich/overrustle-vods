@@ -153,7 +153,7 @@ var Chat = function(id, player, type) {
 		var usernameField = "";
 		var timeFormatted = "";
 		if (time) {
-			timeFormatted = "<span class='time'>" + moment(time).format("HH:mm") + " </span>";
+			timeFormatted = "<span class='time'>" + moment(time).utc().format("HH:mm") + " </span>";
 		}
 		if (username) {
 			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
