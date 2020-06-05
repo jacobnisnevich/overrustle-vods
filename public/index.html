@@ -16,7 +16,7 @@
 
 	<script src= "https://player.twitch.tv/js/embed/v1.js"></script>
 	<script async defer src="https://buttons.github.io/buttons.js"></script>
-	<script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+	<script src="js/lib/split.min.js"></script>
 	<script src="js/lib/moment.min.js"></script>
 	<script src="js/lib/jquery-2.1.4.min.js"></script>
 	<script src="js/lib/tooltipster.bundle.min.js"></script>
@@ -26,6 +26,7 @@
 	<script src="js/util.js"></script>
 	<script src="js/chat.js"></script>
 	<script src="js/scripts.js"></script>
+	<script src="js/focus.js"></script>
 
 	<base target="_blank">
 </head>
@@ -48,15 +49,6 @@
 	</script>
 
 	<script>
-		// adding a random number to the emote stylesheet url so that we avoid caching and (hopefully) always get the most recent version
-		// from https://stackoverflow.com/questions/58972512/linking-a-css-file-with-version-number-for-cache-busting
-		window.addEventListener('load', function() {
-  			var head = document.querySelector('head');
-  			head.innerHTML += '<link rel="stylesheet" href="https://cdn.destiny.gg/emotes/emotes.css?_=' + Math.random() + '" type="text/css">';
-		});
-	</script>
-
-	<script>
 		// detecting if url is yt or twitch
 		function vodURL(url) {
 			var urlCheck = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/gm;
@@ -74,19 +66,72 @@
 				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&');
 			}
 		};
-	</script>
 
-	<script>
 		// click button on "Enter" press
 		// stolen from https://stackoverflow.com/questions/155188/trigger-a-button-click-with-javascript-on-the-enter-key-in-a-text-box
-		window.onload = function () {
+		$(document).ready(function (){
 			document.getElementById("customUrlText").addEventListener("keyup", function(event) {
 				event.preventDefault();
 				if (event.keyCode === 13) {
 					document.getElementById("customUrlButton").click();
-				};
+				}
 			});
+		});
+		
+		$(document).ready(function () {
+			$("head").append("<style id='timeStyle'></style>");
+			$("head").append('<link rel="stylesheet" href="https://cdn.destiny.gg/emotes/emotes.css?_=' + Math.random() + '" type="text/css"/>');
+
+			if (localStorage.getItem('lineLimit')) {
+        		$("#lineLimit").val(localStorage.getItem('lineLimit'));
+    		} else {
+				$("#lineLimit").val(300);
+				localStorage.setItem('lineLimit', $("#lineLimit").val());
+			}
+			
+			if (localStorage.getItem('showTime') === 'true') {
+				$("#showTime").prop('checked', true);
+			} else {
+				$("#showTime").prop('checked', false);
+			}
+			updateShowTime();
+		});
+
+		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
+		function showSettings() {
+			document.getElementById("settings-content").classList.toggle("show");
 		};
+
+		$(document).on('click', 'settings-button-content', function (e) {
+			e.stopPropagation();
+		});
+
+		window.onclick = function(event) {
+  			if (!event.target.matches('#settings-button')) {
+    			var dropdowns = document.getElementsByClassName("settings-button-content");
+    			var i;
+    			for (i = 0; i < dropdowns.length; i++) {
+      				var openDropdown = dropdowns[i];
+      				if (openDropdown.classList.contains('show')) {
+        				openDropdown.classList.remove('show');
+      				}
+    			}
+  			}
+		}
+
+		function updateLineLimit() {
+			localStorage.setItem('lineLimit', $("#lineLimit").val());
+		}
+
+		function updateShowTime() {
+			state = $("#showTime").is(':checked');
+			localStorage.setItem('showTime', state);
+			if (state) {
+				document.getElementById("timeStyle").sheet.insertRule('.chat-line .time {display: inline !important;}');
+			} else {
+				document.getElementById("timeStyle").sheet.deleteRule(0);
+			}
+		}
 	</script>
 
 	<div id="header" class="shadow">
@@ -97,7 +142,10 @@
 			<div><input id="customUrlButton" value="Submit" onclick="vodURL(document.getElementById('customUrlText').value)" type="button"></div>
 			<div><a href="https://www.destiny.gg">Destiny.gg</a></div>
 			<div><a id="destiny-status" href="https://www.destiny.gg/bigscreen">Destiny is offline.</a></div>
-			<div><a class="github-button" href="https://github.com/jacobnisnevich/overrustle-vods" data-icon="octicon-repo-forked" aria-label="Fork overrustle-vods on GitHub">Fork</a></div>
+			<div id="git-buttons">
+				<div><a class="github-button" href="https://github.com/jacobnisnevich/overrustle-vods" data-icon="octicon-repo-forked" aria-label="Fork overrustle-vods on GitHub">Fork</a></div>
+				<div><a class="github-button" href="https://github.com/jacobnisnevich/overrustle-vods/issues" data-icon="octicon-issue-opened" aria-label="Issue jacobnisnevich/overrustle-vods on GitHub">Issue</a></div>
+			</div>
 		</div>
 	</div>
 
@@ -105,8 +153,15 @@
 		<div id="changelog" class="view">
 			<div id="close-changelog-button"><span class="octicon octicon-x"></span></div>
 			<div id="changelog-text">
+				2020-06-02: <br>
+				1. added time to messages (UTC, toggle in settings) <br>
+				2020-06-01: <br>
+				1. experimental change to chat syncing (thanks to Jabelonske for the ideas Wowee) <br>
+				2. change max lines in chat <br>
+				3. you can now focus usernames (click on any message to unfocus) <br>
+				4. hardcoded colors for some people <br>
 				2020-05-26: <br>
-				1. converting special characters in messages to html now (some messages disappeared before) <br>
+				1. converting special characters in messages to html now (some messages disappeared before) !im not sure this worked! <br>
 				2020-05-24: <br>
 				1. playback speed up to 2x should be synced with chat now (decreased setinterval delay, hopefully this doesn't cause any problems) <br>
 				2020-05-22: <br>
@@ -131,7 +186,18 @@
 						<div id="delay-container">Delay: <span id="delay">2</span> sec.</div>
 						<div id="inc-delay-button"><span class="octicon octicon-arrow-right"></span></div>
 					</div>
-					<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
+					<div id="settings">
+						<div class="settings-dropdown">
+							<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
+							<div id="settings-content" class="class-settings-content">
+								<label id="lineLimit-text" for="lineLimit">Max. lines in chat (0 for unlim.):</label>
+								<input type="text" id="lineLimit" name="lineLimit" oninput="updateLineLimit()">
+								<label id="showTime-text" for="showTime">Show time:</label>
+								<input type="checkbox" id="showTime" name="showTime" onclick="updateShowTime()">
+							</div>
+						</div>
+						<div id="switch-sides-button"><span class="octicon octicon-mirror"></span></div>
+					</div>
 				</div>
 				<div id="chat-stream"></div>
 			</div>

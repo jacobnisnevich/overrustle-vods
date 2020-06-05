@@ -6,6 +6,7 @@ var Chat = function(id, player, type) {
 	this.previousTimeOffset = -1;
 	this.playerType = type;
 
+	this.actualPreviousTimeOffset = -1;
 	this.previousMessage = '';
 	this.comboCount = 1;
 
@@ -22,7 +23,8 @@ var Chat = function(id, player, type) {
 						"Well RightToBearArmsLOL, honestly, I think I might talk to Steven about your odd rhetoric.",
 						"BAR BAR BAR", "he handles my", "nukesys", "Did I shield in Lords Mobile?", "THE TIME FOR CHILLING HAS PASSED",
 						"OK HERES THE PLAN", "NO TEARS NOW, ONLY DREAMS", "How did I end up cleaning carpets? <div class='emote LeRuse' title=LeRuse></div>",
-						"B O D G A Y", "JIMMY NOOOO", "<div class='emote nathanTiny2' title=nathanTiny2></div>", ">more like", "Chat, don't woof."];
+						"B O D G A Y", "JIMMY NOOOO", "<div class='emote nathanTiny2' title=nathanTiny2></div>", ">more like", "Chat, don't woof.",
+						"Yeah, fuck off buddy we absolutely need more RNA duos.", "kids fuckin dirt nasty man", "Fuckin every time this kid steps in the battleground someone dies."];
 
 	var self = this;
 
@@ -147,15 +149,19 @@ var Chat = function(id, player, type) {
 			"<span class='combo'>C-C-C-COMBO</span>";
 	}
 
-	this._renderChatMessage = function(username, message) {
+	this._renderChatMessage = function(time, username, message) {
 		var usernameField = "";
+		var timeFormatted = "";
+		if (time) {
+			timeFormatted = "<span class='time'>" + moment(time).utc().format("HH:mm") + " </span>";
+		}
 		if (username) {
-			usernameField = "<span class='username user-" + username + "'>" + username + "</span>: ";
+			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
 		}
 
-		$("#chat-stream").append("<div class='chat-line'>" + 
-			usernameField + 
-			"<span class='message'>" +
+		$("#chat-stream").append("<div class='chat-line' data-username='" + username + "'>" + 
+			timeFormatted + usernameField + 
+			"<span class='message' onclick='document._removeFocusRule()'>" +
 		  message + "</span></div>");		
 	}
 
@@ -186,33 +192,75 @@ var Chat = function(id, player, type) {
 					 this._formatTimeNumber(seconds);
 	}
 
+	if (self.playerType == "twitch") {
+		self.videoPlayer.addEventListener(Twitch.Player.PLAYING, function() {
+			self.actualPreviousTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
+		});
+	} else {
+		self.videoPlayer.addEventListener('onStateChange', function(event) {
+			if (event.data == YT.PlayerState.PLAYING) {
+				self.actualPreviousTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
+			}
+		});
+	}
+
 	window.setInterval(function() {
 		if (self.status == "running" && self.chat) {
 			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
-			var utcFormat = self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset, 's').format().replace("+00:00", "Z");
-			
-			if (currentTimeOffset != self.previousTimeOffset && self.chat[utcFormat]) {
-				self.chat[utcFormat].forEach(function(chatLine) {
-					if (self.previousMessage == chatLine.message && self.emoteList[self.previousMessage]) {
-						self.comboCount++;
+			var utcFormat = [];
+			var timestamps = [];
 
-						$('#chat-stream .chat-line').last().remove();
-						var comboMessage = self._renderComboMessage(self.previousMessage, self.comboCount);
-						self._renderChatMessage(null, comboMessage);
-					} else {
-						self.comboCount = 1;
-						self._renderChatMessage(chatLine.username, self._formatMessage(chatLine.message));
+			if (currentTimeOffset != self.previousTimeOffset) {
+
+				timeDifference = currentTimeOffset - self.actualPreviousTimeOffset;
+				
+				timestamps.push(self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
+
+				if (timeDifference > 1 && timeDifference < 30) {
+					for (let i = 1; i < timeDifference; i++) {
+						timestamps.push(timestamp = self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
+					};
+				}
+
+				timestamps.forEach((element) => {
+					if (element in self.chat) {
+						utcFormat.unshift(element);
 					}
-
-					self.previousMessage = chatLine.message;
 				});
 
-				$("#chat-stream").animate({ 
-					scrollTop: $("#chat-stream").prop("scrollHeight")
-				}, 0);
+				utcFormat.forEach((element) => {
+					self.chat[element].forEach(function(chatLine) {
+						if (self.previousMessage == chatLine.message && self.emoteList[self.previousMessage]) {
+							self.comboCount++;
+							$('#chat-stream .chat-line').last().remove();
+							var comboMessage = self._renderComboMessage(self.previousMessage, self.comboCount);
+							self._renderChatMessage(null, null, comboMessage);
+						} else {
+							self.comboCount = 1;
+							self._renderChatMessage(element, chatLine.username, self._formatMessage(chatLine.message));
+						}
+	
+						self.previousMessage = chatLine.message;
+
+						$("#chat-stream").animate({
+							scrollTop: $("#chat-stream").prop("scrollHeight")
+						}, 0);
+					});
+				});
+
+				self.actualPreviousTimeOffset = currentTimeOffset;
+
+				if ($("#lineLimit").val() != "0" || $("#lineLimit").val() != "") {
+					if ($("#chat-stream").children().length > $("#lineLimit").val()) {
+						removeLine = "#chat-stream div:lt(" + ($("#chat-stream").children().length - $("#lineLimit").val()) + ")";
+						$(removeLine).remove();
+					}
+				}
+
 			}
 
 			self.previousTimeOffset = currentTimeOffset;
+
 		}
 	}, 500);
 };
