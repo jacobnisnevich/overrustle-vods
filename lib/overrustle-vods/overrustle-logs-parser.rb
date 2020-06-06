@@ -1,6 +1,5 @@
 require 'time'
 require 'cgi'
-require 'open-uri'
 
 class OverRustleLogsParser
   def initialize(urls)
