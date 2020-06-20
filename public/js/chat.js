@@ -1,10 +1,12 @@
-var Chat = function(id, player, type) {
+var Chat = function(id, player, type, start, end) {
 	this.videoId = id;
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
 	this.previousTimeOffset = -1;
 	this.playerType = type;
+	this.timestampStart = start;
+	this.timestampEnd = end;
 
 	this.actualPreviousTimeOffset = -1;
 	this.previousMessage = '';
@@ -42,17 +44,20 @@ var Chat = function(id, player, type) {
 		self.hReplace = new RegExp('([h])', 'gm');
 		self.mReplace = new RegExp('([m])', 'gm');
 		self.sReplace = new RegExp('([s])', 'gm');
-		data = JSON.parse(vodData)
+		data = JSON.parse(vodData);
 		if (self.playerType === "twitch") {
-			self.recordedTime = moment(data["data"][0]["created_at"]).utc();
+			self.recordedTime = self.timestampStart ? moment(self.timestampStart).utc() : moment(data["data"][0]["created_at"]).utc();
 			self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
 			self.duration = moment.duration(self.durationString).asSeconds();
-			self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
-			self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+			self.endTime = self.timestampEnd ? moment(self.timestampEnd).utc() : moment(self.recordedTime).add(self.duration, 'seconds').utc();
 		} else if (self.playerType === "youtube") {
-			self.recordedTime = moment(data["items"][0]["liveStreamingDetails"]["actualStartTime"]).utc();
-			self.endTime = moment(data["items"][0]["liveStreamingDetails"]["actualEndTime"]).utc();
-			self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+			if (!data["items"][0]["liveStreamingDetails"] && self.timestampStart && self.timestampEnd) {
+				self.recordedTime = moment(self.timestampStart).utc();
+				self.endTime = moment(self.timestampEnd).utc();
+			} else {
+				self.recordedTime = moment(data["items"][0]["liveStreamingDetails"]["actualStartTime"]).utc();
+				self.endTime = moment(data["items"][0]["liveStreamingDetails"]["actualEndTime"]).utc();
+			}
 		}
 		
 		var overrustleLogsDates = [];
@@ -73,6 +78,8 @@ var Chat = function(id, player, type) {
 			}
 			overrustleLogsDates.push(overrustleLogsStr);
 		}
+
+		self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
 
 		var randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
 		var randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];

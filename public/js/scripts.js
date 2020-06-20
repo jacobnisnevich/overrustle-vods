@@ -4,6 +4,8 @@ $(document).ready(function() {
     var id = getUrlParameter("id");
     var v = getUrlParameter("v")
     var time = getUrlParameter("t");
+    var start = getUrlParameter("start");
+    var end = getUrlParameter("end");
     var page = 1;
     var playerActive = 0;
     globals.sizes = localStorage.getItem('split-sizes');
@@ -15,25 +17,25 @@ $(document).ready(function() {
     }
 
     if (id && time) {
-        loadPlayer(id, time, "twitch");
+        loadPlayer(id, time, "twitch", start, end);
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
         playerActive = 1;
     } else if (id && !time) {
-        loadPlayer(id, 0, "twitch");
+        loadPlayer(id, 0, "twitch", start, end);
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
         playerActive = 1;
     } else if (v && time) {
-        loadPlayer(v, time, "youtube");
+        loadPlayer(v, time, "youtube", start, end);
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
         playerActive = 1;
     } else if (v && !time) {
-        loadPlayer(v, 0, "youtube");
+        loadPlayer(v, 0, "youtube", start, end);
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
@@ -219,12 +221,12 @@ var loadDestinyStatus = function() {
     })
 }
 
-var loadPlayer = function(id, time, type) {
+var loadPlayer = function(id, time, type, start, end) {
     $("#player").css("display", "flex");
 
     if (type === "twitch") {
         var player = new Twitch.Player("video-player", { video: id , time: time });
-        var chat = new Chat(id, player, type);
+        var chat = new Chat(id, player, type, start, end);
         player.addEventListener(Twitch.Player.PLAYING, function() {
             chat.startChatStream();
         });
@@ -241,7 +243,7 @@ var loadPlayer = function(id, time, type) {
         document.querySelector("#video-player").appendChild(replacedDiv);
         window.onYouTubeIframeAPIReady = function() {
             player = new YT.Player("yt-player", { videoId: id , playerVars: {"start": time, "autoplay": 1}});
-            chat = new Chat(id, player, type);
+            chat = new Chat(id, player, type, start, end);
             player.addEventListener("onStateChange", function(event) {
                 if (event.data == YT.PlayerState.PLAYING) {
                     chat.startChatStream();
