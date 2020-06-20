@@ -126,13 +126,13 @@ $(document).ready(function() {
     });
 
     $("#dec-delay-button").click(function() {
-        delay = Number($("#delay").text()) - 1;
-        $("#delay").text(delay);
+        delay = Number($("#delay").val()) - 1;
+        $("#delay").val(delay);
     });
 
     $("#inc-delay-button").click(function() {
-        delay = Number($("#delay").text()) + 1;
-        $("#delay").text(delay);
+        delay = Number($("#delay").val()) + 1;
+        $("#delay").val(delay);
     });
 
     $("#switch-sides-button").click(function() {
