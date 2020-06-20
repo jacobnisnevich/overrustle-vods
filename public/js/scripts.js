@@ -124,11 +124,8 @@ $(document).ready(function() {
     });
 
     $("#dec-delay-button").click(function() {
-        delay = Number($("#delay").text());
-        if (delay >= 1) {
-            delay -= 1;
-            $("#delay").text(delay);
-        }
+        delay = Number($("#delay").text()) - 1;
+        $("#delay").text(delay);
     });
 
     $("#inc-delay-button").click(function() {
