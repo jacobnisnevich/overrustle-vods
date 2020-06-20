@@ -51,12 +51,17 @@ var Chat = function(id, player, type, start, end) {
 		self.sReplace = new RegExp('([s])', 'gm');
 		data = JSON.parse(vodData);
 		if (self.playerType === "twitch") {
-			self.recordedTime = self.timestampStart ? moment(self.timestampStart).utc() : moment(data["data"][0]["created_at"]).utc();
-			self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
-			self.duration = moment.duration(self.durationString).asSeconds();
-			self.endTime = self.timestampEnd ? moment(self.timestampEnd).utc() : moment(self.recordedTime).add(self.duration, 'seconds').utc();
+			if (self.timestampStart && self.timestampEnd) {
+				self.recordedTime = moment(self.timestampStart).utc();
+				self.endTime = moment(self.timestampEnd).utc();
+			} else {
+				self.recordedTime = moment(data["data"][0]["created_at"]).utc();
+				self.durationString = "PT" + data["data"][0]["duration"].replace(self.hReplace, 'H').replace(self.mReplace, 'M').replace(self.sReplace, 'S');
+				self.duration = moment.duration(self.durationString).asSeconds();
+				self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
+			}
 		} else if (self.playerType === "youtube") {
-			if (!data["items"][0]["liveStreamingDetails"] && self.timestampStart && self.timestampEnd) {
+			if (self.timestampStart && self.timestampEnd) {
 				self.recordedTime = moment(self.timestampStart).utc();
 				self.endTime = moment(self.timestampEnd).utc();
 			} else {
