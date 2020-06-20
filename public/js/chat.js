@@ -84,9 +84,7 @@ var Chat = function(id, player, type) {
 		+ "<div id='loading-message-3' class='chat-line'><span class='message'>" + randomMessage + "</span></div>" + "</div>");
 
 		$.get("/chat", {
-			urls: JSON.stringify(overrustleLogsDates),
-			from: self.recordedTime.clone().format("YYYY-MM-DD HH:mm:ss UTC"),
-			to: self.endTime.clone().format("YYYY-MM-DD HH:mm:ss UTC")
+			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {
 			self.chat = JSON.parse(data);
 			self.startChatStream();

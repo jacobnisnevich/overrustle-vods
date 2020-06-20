@@ -33,7 +33,7 @@ get '/' do
 end
 
 get '/chat' do
-  overRustleLogsParser = OverRustleLogsParser.new(JSON.parse(params["urls"]), params["from"], params["to"])
+  overRustleLogsParser = OverRustleLogsParser.new(JSON.parse(params["urls"]))
   overRustleLogsParser.get_chat.to_json
 end
 
