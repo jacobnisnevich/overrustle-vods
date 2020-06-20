@@ -8,6 +8,11 @@ var Chat = function(id, player, type, start, end) {
 	this.timestampStart = start;
 	this.timestampEnd = end;
 
+	this.chatStream = $("#chat-stream");
+	this.lastLine = $("#chat-stream .chat-line");
+	this.lineLimit = $("#lineLimit");
+	this.delay = $("#delay");
+
 	this.actualPreviousTimeOffset = -1;
 	this.previousMessage = '';
 	this.comboCount = 1;
@@ -86,7 +91,7 @@ var Chat = function(id, player, type, start, end) {
 
 		loadingEmote = " <div class='emote " + randomEmote + "' title=" + randomEmote + "/>"
 
-		$("#chat-stream").append("<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Loading logs!</span></div>"
+		self.chatStream.append("<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Loading logs!</span></div>"
 		+ "<div id='loading-message-2' class='chat-line'><span class='message'>Please wait " + loadingEmote + "</span></div>"
 		+ "<div id='loading-message-3' class='chat-line'><span class='message'>" + randomMessage + "</span></div>" + "</div>");
 
@@ -166,7 +171,7 @@ var Chat = function(id, player, type, start, end) {
 			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
 		}
 
-		$("#chat-stream").append("<div class='chat-line' data-username='" + username + "'>" + 
+		self.chatStream.append("<div class='chat-line' data-username='" + username + "'>" + 
 			timeFormatted + usernameField + 
 			"<span class='message' onclick='document._removeFocusRule()'>" +
 		  message + "</span></div>");		
@@ -221,11 +226,11 @@ var Chat = function(id, player, type, start, end) {
 
 				timeDifference = currentTimeOffset - self.actualPreviousTimeOffset;
 				
-				timestamps.push(self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
+				timestamps.push(self.recordedTime.clone().add(Number(self.delay.val()) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
 
 				if (timeDifference > 1 && timeDifference < 30) {
 					for (let i = 1; i < timeDifference; i++) {
-						timestamps.push(timestamp = self.recordedTime.clone().add(Number($("#delay").text()) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
+						timestamps.push(timestamp = self.recordedTime.clone().add(Number(self.delay.val()) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
 					};
 				}
 
@@ -239,7 +244,7 @@ var Chat = function(id, player, type, start, end) {
 					self.chat[element].forEach(function(chatLine) {
 						if (self.previousMessage == chatLine.message && self.emoteList[self.previousMessage]) {
 							self.comboCount++;
-							$('#chat-stream .chat-line').last().remove();
+							self.lastLine.last().remove();
 							var comboMessage = self._renderComboMessage(self.previousMessage, self.comboCount);
 							self._renderChatMessage(null, null, comboMessage);
 						} else {
@@ -249,17 +254,17 @@ var Chat = function(id, player, type, start, end) {
 	
 						self.previousMessage = chatLine.message;
 
-						$("#chat-stream").animate({
-							scrollTop: $("#chat-stream").prop("scrollHeight")
+						self.chatStream.animate({
+							scrollTop: self.chatStream.prop("scrollHeight")
 						}, 0);
 					});
 				});
 
 				self.actualPreviousTimeOffset = currentTimeOffset;
 
-				if ($("#lineLimit").val() != "0" || $("#lineLimit").val() != "") {
-					if ($("#chat-stream").children().length > $("#lineLimit").val()) {
-						removeLine = "#chat-stream div:lt(" + ($("#chat-stream").children().length - $("#lineLimit").val()) + ")";
+				if (self.lineLimit.val() != "0" || self.lineLimit.val() != "") {
+					if (self.chatStream.children().length > self.lineLimit.val()) {
+						removeLine = "#chat-stream div:lt(" + (self.chatStream.children().length - self.lineLimit.val()) + ")";
 						$(removeLine).remove();
 					}
 				}
