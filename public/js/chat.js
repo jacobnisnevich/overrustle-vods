@@ -60,6 +60,8 @@ var Chat = function(id, player, type, start, end) {
 			}
 		}
 		
+		self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
+
 		var overrustleLogsDates = [];
 
 		for (let i = 0; i <= self.difference; i++) {
@@ -78,8 +80,6 @@ var Chat = function(id, player, type, start, end) {
 			}
 			overrustleLogsDates.push(overrustleLogsStr);
 		}
-
-		self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
 
 		var randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
 		var randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];
