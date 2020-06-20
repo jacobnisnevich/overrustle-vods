@@ -9,7 +9,6 @@ var Chat = function(id, player, type, start, end) {
 	this.timestampEnd = end;
 
 	this.chatStream = $("#chat-stream");
-	this.lastLine = $("#chat-stream .chat-line");
 	this.lineLimit = $("#lineLimit");
 	this.delay = $("#delay");
 
@@ -249,7 +248,7 @@ var Chat = function(id, player, type, start, end) {
 					self.chat[element].forEach(function(chatLine) {
 						if (self.previousMessage == chatLine.message && self.emoteList[self.previousMessage]) {
 							self.comboCount++;
-							self.lastLine.last().remove();
+							$("#chat-stream .chat-line").last().remove();
 							var comboMessage = self._renderComboMessage(self.previousMessage, self.comboCount);
 							self._renderChatMessage(null, null, comboMessage);
 						} else {
