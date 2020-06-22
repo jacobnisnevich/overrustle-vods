@@ -54,16 +54,19 @@
 			var urlCheck = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/gm;
 			var matches = url.matchAll(urlCheck);
 			var matchArray = [...matches];
+			var startTimestamp = $("#start-timestamp").val();
+			var endTimestamp = $("#end-timestamp").val();
+			var timestamps = (startTimestamp != "" && endTimestamp != "") ? "&start=" + startTimestamp + "&end=" + endTimestamp : "";
 			if (matchArray[0][3] === "www.twitch.tv" || matchArray[0][3] === "twitch.tv") {
 				regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
 				replaced = url.match(regex);
-				window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&');
+				window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&') + timestamps;
 			}
 			if (matchArray[0][3] === "www.youtube.com" || matchArray[0][3] === "www.youtube.com") {
-				window.location.href = window.location.origin + matchArray[0][7];
+				window.location.href = window.location.origin + matchArray[0][7] + timestamps;
 			}
 			if (matchArray[0][3] === "youtu.be") {
-				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&');
+				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&') + timestamps;
 			}
 		};
 
@@ -96,6 +99,11 @@
 			}
 			updateShowTime();
 		});
+
+		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
+		function showManualTimestamps() {
+			document.getElementById("manual-content").classList.toggle("show");
+		};
 
 		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
 		function showSettings() {
@@ -153,6 +161,8 @@
 		<div id="changelog" class="view">
 			<div id="close-changelog-button"><span class="octicon octicon-x"></span></div>
 			<div id="changelog-text">
+				2020-06-22: <br>
+				1. button for custom timestamps <br>
 				2020-06-20: <br>
 				1. custom start and end timestamps <br>
 				2. delay is now in a textbox <br>

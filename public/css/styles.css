@@ -266,13 +266,19 @@ body {
 	display: flex;
 }
 
-.settings-dropdown {
+.settings-dropdown, .manual-dropdown {
 	position: relative;
 	display: inline-block;
 	padding-right: 25%;
+	z-index: 9999;
+}
+
+.manual-dropdown {
+	padding-right: 0;
+	margin-right: 0 !important;
 }
   
-.class-settings-content {
+.class-settings-content, .class-manual-content {
 	z-index: 9999;
 	display: none;
 	position: absolute;
@@ -296,7 +302,7 @@ body {
 
 .show {display: block;}
 
-#dec-delay-button, #inc-delay-button, #switch-sides-button, #settings-button {
+#dec-delay-button, #inc-delay-button, #switch-sides-button, #settings-button, #manual-button {
 	cursor: pointer;
 }
 
