@@ -31,7 +31,13 @@ body {
 	justify-content: space-between;
 }
 
-#header-title {
+#main-links {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#header-title, #changelog-button {
 	color: #DDD;
 	font-size: 36px;
 	padding: 15px;
@@ -39,6 +45,16 @@ body {
 }
 
 #header-title:hover {
+	color: white;
+}
+
+#changelog-button {
+	color: #DDD;
+	font-size: 20px;
+	margin-right: 10px;
+}
+
+#changelog-button:hover {
 	color: white;
 }
 
@@ -63,6 +79,10 @@ body {
 
 #header-links div a:hover {
 	color: white;
+}
+
+#git-buttons {
+	margin-right: 0 !important;
 }
 
 #git-buttons .github-button{
@@ -120,7 +140,7 @@ body {
 }
 
 #body {
-	height: 100%;
+	height: calc(100% - 72px - 20px);
 }
 
 /* VOD Browser */
@@ -186,11 +206,10 @@ body {
 	padding: 15px 10px;
 	font-size: 18px;
 	font-weight: bold;
-
 	flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
 }
 
 .info-container .date {
@@ -200,7 +219,7 @@ body {
 
 #player {
 	display: flex;
-	height: 100%;
+	height: calc(100% + 20px);
 }
 
 #video-player {
@@ -211,9 +230,7 @@ body {
 }
 
 #video-player iframe {
-	height: -moz-calc(100% - 72px);
-	height: -webkit-calc(100% - 72px);
-	height: calc(100% - 72px);
+	height: 100%;
 	width: 100%;
 }
 
@@ -225,9 +242,7 @@ body {
 }
 
 #chat-container {
-	height: -moz-calc(100% - 72px);
-	height: -webkit-calc(100% - 72px);
-	height: calc(100% - 72px);
+	height: 100%;
 	width: 390px;
 }
 

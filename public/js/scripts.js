@@ -2,12 +2,13 @@ var globals = {};
 
 $(document).ready(function() {
     var id = getUrlParameter("id");
-    var v = getUrlParameter("v")
-    var time = getUrlParameter("t");
+    var v = getUrlParameter("v");
+    var time = (getUrlParameter("t")) ? getUrlParameter("t") : 0;
     var start = getUrlParameter("start");
     var end = getUrlParameter("end");
     var page = 1;
     var playerActive = 0;
+    var playerType = (id) ? "twitch" : (v) ? "youtube" : null;
     globals.sizes = localStorage.getItem('split-sizes');
 
     if (globals.sizes) {
@@ -16,26 +17,9 @@ $(document).ready(function() {
         globals.sizes = [80, 20];
     }
 
-    if (id && time) {
-        loadPlayer(id, time, "twitch", start, end);
-        $("#browse").hide();
-        $("#player").show();
-        $("#changelog").hide();
-        playerActive = 1;
-    } else if (id && !time) {
-        loadPlayer(id, 0, "twitch", start, end);
-        $("#browse").hide();
-        $("#player").show();
-        $("#changelog").hide();
-        playerActive = 1;
-    } else if (v && time) {
-        loadPlayer(v, time, "youtube", start, end);
-        $("#browse").hide();
-        $("#player").show();
-        $("#changelog").hide();
-        playerActive = 1;
-    } else if (v && !time) {
-        loadPlayer(v, 0, "youtube", start, end);
+    if (id || v) {
+        var vidId = (playerType === "twitch") ? id : (playerType === "youtube") ? v : null;
+        loadPlayer(vidId, time, playerType, start, end);
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
