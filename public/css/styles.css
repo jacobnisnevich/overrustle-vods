@@ -354,11 +354,26 @@ body {
     padding-right: .3em;
 }
 
-.chat-line .username {
+.chat-line .user {
 	font-weight: bold;
 	cursor: pointer;
 	vertical-align: middle;
 	color: #CACACA;
+}
+
+.chat-line .features {
+	display: -webkit-inline-box;
+	display: inline-flex;
+	vertical-align: text-top;
+	-webkit-box-align: center;
+	align-items: center;
+	margin-left: -.2em;
+	margin-right: .2em
+}
+
+.chat-line .features .flair {
+	margin-left: .2em;
+	margin-right: .2em
 }
 
 .chat-line .message {

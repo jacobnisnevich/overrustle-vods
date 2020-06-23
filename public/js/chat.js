@@ -36,6 +36,10 @@ var Chat = function(id, player, type, start, end) {
 		infoUrl = "/vidinfo?id=";
 	}
 
+	$.get(featuresUrl, {}, function (data) {
+		self.features = data;
+	});
+
 	$.get(infoUrl + this.videoId, function(vodData) {
 		self.hReplace = new RegExp('([h])', 'gm');
 		self.mReplace = new RegExp('([m])', 'gm');
@@ -158,16 +162,28 @@ var Chat = function(id, player, type, start, end) {
 
 	this._renderChatMessage = function(time, username, message) {
 		var usernameField = "";
+		var featuresField = "";
 		var timeFormatted = "";
+		var featuresList = "";
 		if (time) {
 			timeFormatted = "<span class='time'>" + moment(time).utc().format("HH:mm") + " </span>";
 		}
+		if (username in self.features) {
+			let flairArray = self.features[username].slice(1,-1).split(",");
+			let flairList = "";
+			flairArray.forEach(function(flair) {
+				flair = flair.replace(/\s+/g, '').slice(1, -1);
+				featuresList += flair + " ";
+				flairList += "<i class='flair " + flair + "'></i>";
+			});
+			featuresField =  "<span class='features'>" + flairList + "</span>";
+		}
 		if (username) {
-			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
+			usernameField = `<span onclick='document._addFocusRule("${username}")' class='user-${username} user ${featuresList}'>${username}</span>: `;
 		}
 
 		self.chatStream.append("<div class='chat-line' data-username='" + username + "'>" + 
-			timeFormatted + usernameField + 
+			timeFormatted + featuresField + usernameField + 
 			"<span class='message' onclick='document._removeFocusRule()'>" +
 		  	message + "</span></div>");
 	}
