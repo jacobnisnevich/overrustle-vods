@@ -506,27 +506,11 @@ body {
 	color: #b002c7 !important;	
 }
 
-.user-Destiny {
-	color: #EE1F1F !important;
-}
-
-.user-Bot, .user-Logs {
-	color: #0088CC !important;
-}
-
-.user-RightToBearArmsLOL, .user-Cake, .user-CeneZa, .user-Linusred {
-	color: #DB4C1C !important;
-}
-
-.user-Dan, .user-MrMouton, .user-RNA, .user-RenegadeZero, .user-LilyPichu, .user-ErisAnn {
-	color: #E79015 !important;
-}
-
 .chat-line[data-username="Broadcast"], .chat-line[data-username="Subscriber"], .chat-line[data-username="SubscriberMessage"] {
     color: transparent !important;
 }
 
-.chat-line[data-username="Broadcast"] .username, .chat-line[data-username="Subscriber"] .username, .chat-line[data-username="SubscriberMessage"] .username {
+.chat-line[data-username="Broadcast"] .user, .chat-line[data-username="Subscriber"] .user, .chat-line[data-username="SubscriberMessage"] .user {
     display: none !important;
 }
 
