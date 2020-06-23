@@ -7,7 +7,6 @@ var LWOD = function(id, player) {
 		id: id
 	}, function (data) {
 		if (data != "") {
-			console.log("passed")
 			$("#lwod-button").show();
 			createLWODTimestamps(data);
 		}
