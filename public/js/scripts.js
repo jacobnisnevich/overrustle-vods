@@ -51,17 +51,47 @@ $(document).ready(function() {
     });
 
     $("#changelog-button").click(function() {
-        $("#changelog").show();
-        $("#player").hide();
-        $("#browse").hide();
-        $("#lwod").hide();
+        if (changelogActive === 0) {
+            $("#changelog").show();
+            $("#player").hide();
+            $("#browse").hide();
+            $("#lwod").hide();
+            changelogActive = 1
+        } else {
+            $("#changelog").hide();
+            changelogActive = 0
+            if (playerActive === 1) {
+                $("#player").show();
+                $("#browse").hide();
+                $("#lwod").hide();
+            } else {
+                $("#player").hide();
+                $("#browse").show();
+                $("#lwod").hide();
+            }
+        }
     });
 
     $("#lwod-button").click(function() {
-        $("#lwod").show();
-        $("#changelog").hide();
-        $("#player").hide();
-        $("#browse").hide();
+        if (lwodActive === 0) {
+            $("#lwod").show();
+            $("#changelog").hide();
+            $("#player").hide();
+            $("#browse").hide();
+            lwodActive = 1
+        } else {
+            $("#lwod").hide();
+            lwodActive = 0
+            if (playerActive === 1) {
+                $("#player").show();
+                $("#browse").hide();
+                $("#changelog").hide();
+            } else {
+                $("#player").hide();
+                $("#browse").show();
+                $("#changelog").hide();
+            }
+        }
     });
 
     $("#close-changelog-button").click(function() {
