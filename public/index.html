@@ -81,6 +81,15 @@
 			}
 		};
 
+		function onlyChat() {
+			var startTimestamp = $("#start-timestamp").val();
+			var endTimestamp = $("#end-timestamp").val();
+			var timestamps = (startTimestamp != "" && endTimestamp != "") ? "&start=" + startTimestamp + "&end=" + endTimestamp : "";
+			if (startTimestamp && endTimestamp) {
+				window.location.href = window.location.origin + '?chatonly=true' + timestamps;
+			}
+		}
+
 		// click button on "Enter" press
 		// stolen from https://stackoverflow.com/questions/155188/trigger-a-button-click-with-javascript-on-the-enter-key-in-a-text-box
 		$(document).ready(function (){
@@ -152,6 +161,7 @@
 					<input type="text" id="start-timestamp" name="start-timestamp" placeholder="2020-01-01T12:34:56Z">
 					<label id="end-timestamp-text" for="lineLimit">End chat at:</label>
 					<input type="text" id="end-timestamp" name="end-timestamp" placeholder="2020-01-02T12:34:56Z">
+					<input id="chatonly" value="Chat Only" onclick="onlyChat()" type="button">
 				</div>
 			</div>
 			<div><input id="customUrlButton" value="Submit" onclick="vodURL(document.getElementById('customUrlText').value)" type="button"></div>

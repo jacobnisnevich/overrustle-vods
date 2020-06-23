@@ -3,12 +3,15 @@ var globals = {};
 $(document).ready(function() {
     var id = getUrlParameter("id");
     var v = getUrlParameter("v");
+    var chatonly = getUrlParameter("chatonly");
     var time = (getUrlParameter("t")) ? getUrlParameter("t") : 0;
     var start = getUrlParameter("start");
     var end = getUrlParameter("end");
     var page = 1;
     var playerActive = 0;
-    var playerType = (id) ? "twitch" : (v) ? "youtube" : null;
+    var changelogActive = 0;
+    var lwodActive = 0;
+    var playerType = (id) ? "twitch" : (v) ? "youtube" : (chatonly) ? "chatonly" : null;
     globals.sizes = localStorage.getItem('split-sizes');
 
     if (globals.sizes) {
@@ -17,8 +20,8 @@ $(document).ready(function() {
         globals.sizes = [80, 20];
     }
 
-    if (id || v) {
-        var vidId = (playerType === "twitch") ? id : (playerType === "youtube") ? v : null;
+    if (id || v || chatonly) {
+        var vidId = (playerType === "twitch") ? id : (playerType === "youtube") ? v : (playerType === "chatonly") ? "nothing" : null;
         loadPlayer(vidId, time, playerType, start, end);
         $("#browse").hide();
         $("#player").show();
@@ -298,6 +301,9 @@ var loadPlayer = function(id, time, type, start, end) {
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    } else if (type === "chatonly") {
+        var chat = new Chat(id, player, type, start, end);
+        chat.startChatStream();
     }
 
     $("body").css("overflow", "hidden");

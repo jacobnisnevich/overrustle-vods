@@ -1,5 +1,9 @@
 var Chat = function(id, player, type, start, end) {
-	this.videoId = id;
+	if (id === "nothing") {
+		this.videoId = "";
+	} else {
+		this.videoId = id;
+	}
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
@@ -15,6 +19,8 @@ var Chat = function(id, player, type, start, end) {
 	this.actualPreviousTimeOffset = -1;
 	this.previousMessage = '';
 	this.comboCount = 1;
+
+	this.chatonlyCounter = 0;
 
 	const randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
 	const randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];
@@ -34,11 +40,9 @@ var Chat = function(id, player, type, start, end) {
 		infoUrl = "/vodinfo?id=";
 	} else if (this.playerType === "youtube") {
 		infoUrl = "/vidinfo?id=";
+	} else if (this.playerType === "chatonly") {
+		infoUrl = "/emotes"
 	}
-
-	$.get(featuresUrl, {}, function (data) {
-		self.features = data;
-	});
 
 	$.get(infoUrl + this.videoId, function(vodData) {
 		self.hReplace = new RegExp('([h])', 'gm');
@@ -69,6 +73,15 @@ var Chat = function(id, player, type, start, end) {
 							+ "<div id='loading-message-3' class='chat-line'><span class='message'>Please input start and end timestamps using the button next to url input and try again " + loadingEmote + "</span></div></div>";
 					}
 				}
+		} else if (self.playerType === "chatonly") {
+			if (self.timestampStart && self.timestampEnd) {
+				self.recordedTime = moment(self.timestampStart).utc();
+				self.endTime = moment(self.timestampEnd).utc();
+			} else {
+				self.loadingMsg = "<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Chat error!</span></div>"
+					+ "<div id='loading-message-2' class='chat-line'><span class='message'>You shouldn't be here >:(</span></div>"
+					+ "<div id='loading-message-3' class='chat-line'><span class='message'>Please input start and end timestamps using the button next to url input and try again " + loadingEmote + "</span></div></div>";
+			}
 		}
 		
 		self.chatStream.append(self.loadingMsg);
@@ -93,6 +106,10 @@ var Chat = function(id, player, type, start, end) {
 			}
 			overrustleLogsDates.push(overrustleLogsStr);
 		}
+
+		$.get(featuresUrl, {}, function (data) {
+			self.features = data;
+		});
 
 		$.get("/chat", {
 			urls: JSON.stringify(overrustleLogsDates)
@@ -219,17 +236,20 @@ var Chat = function(id, player, type, start, end) {
 		self.videoPlayer.addEventListener(Twitch.Player.PLAYING, function() {
 			self.actualPreviousTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
 		});
-	} else {
+	} else if (self.playerType == "youtube") {
 		self.videoPlayer.addEventListener('onStateChange', function(event) {
 			if (event.data == YT.PlayerState.PLAYING) {
 				self.actualPreviousTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
 			}
 		});
+	} else if (self.playerType == "chatonly") {
+		self.actualPreviousTimeOffset = 0
 	}
 
 	window.setInterval(function() {
+		self.chatonlyCounter += 0.5;
 		if (self.status == "running" && self.chat) {
-			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
+			var currentTimeOffset = (self.playerType === "chatonly") ? Math.floor(self.chatonlyCounter) : Math.floor(self.videoPlayer.getCurrentTime());
 			var utcFormat = [];
 			var timestamps = [];
 
