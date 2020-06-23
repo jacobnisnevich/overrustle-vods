@@ -23,6 +23,7 @@ $(document).ready(function() {
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
+        $("#lwod").hide();
         playerActive = 1;
     } else {
         // preloading all vods since twitch api pagination is inconsistent and bad >:(
@@ -35,6 +36,7 @@ $(document).ready(function() {
         $("#player").hide();
         $("#browse").show();
         $("#changelog").hide();
+        $("#lwod").hide();
         playerActive = 0;
     }
 
@@ -52,6 +54,14 @@ $(document).ready(function() {
         $("#changelog").show();
         $("#player").hide();
         $("#browse").hide();
+        $("#lwod").hide();
+    });
+
+    $("#lwod-button").click(function() {
+        $("#lwod").show();
+        $("#changelog").hide();
+        $("#player").hide();
+        $("#browse").hide();
     });
 
     $("#close-changelog-button").click(function() {
@@ -59,9 +69,24 @@ $(document).ready(function() {
         if (playerActive === 1) {
             $("#player").show();
             $("#browse").hide();
+            $("#lwod").hide();
         } else {
             $("#player").hide();
             $("#browse").show();
+            $("#lwod").hide();
+        }
+    });
+
+    $("#close-lwod-button").click(function() {
+        $("#lwod").hide();
+        if (playerActive === 1) {
+            $("#player").show();
+            $("#browse").hide();
+            $("#changelog").hide();
+        } else {
+            $("#player").hide();
+            $("#browse").show();
+            $("#changelog").hide();
         }
     });
 
@@ -211,6 +236,7 @@ var loadPlayer = function(id, time, type, start, end) {
     if (type === "twitch") {
         var player = new Twitch.Player("video-player", { video: id , time: time });
         var chat = new Chat(id, player, type, start, end);
+        var lwod = new LWOD(id, player);
         player.addEventListener(Twitch.Player.PLAYING, function() {
             chat.startChatStream();
         });
@@ -263,5 +289,21 @@ var createVodEntries = function(vodData) {
 
 var createVodEntry = function(vod) {
     $("#vod-tmpl").tmpl(vod).appendTo("#vod-list");
-}
+};
+
+var createLWODTimestamps = function(data) {
+    data.forEach(function(timestamp) {
+        createLWODEntry({
+            starttime: timestamp[0], 
+            endtime: timestamp[1], 
+            game: timestamp[2], 
+            subject: timestamp[3], 
+            topic: timestamp[4]
+        });
+    })
+};
+
+var createLWODEntry = function(timestamp) {
+    $("#timestamp-tmpl").tmpl(timestamp).appendTo(".lwod-insert");
+};
 

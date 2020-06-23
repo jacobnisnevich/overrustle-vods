@@ -48,13 +48,18 @@ body {
 	color: white;
 }
 
-#changelog-button {
+#changelog-button, #lwod-button {
 	color: #DDD;
 	font-size: 20px;
 	margin-right: 10px;
+	cursor: pointer;
 }
 
-#changelog-button:hover {
+#lwod-button {
+	display: none;
+}
+
+#changelog-button:hover, #lwod-button:hover {
 	color: white;
 }
 
@@ -141,6 +146,53 @@ body {
 
 #body {
 	height: calc(100% - 72px - 20px);
+}
+
+/* LWOD */
+
+#lwod {
+	color: white;
+	font-size: 20px;
+	width: 60%;
+	margin: 20px auto;
+	position: relative;
+}
+
+#table-container {
+	overflow: hidden;
+}
+
+#close-lwod-button {
+	position: absolute;
+	right: 1em;
+	cursor: pointer;
+}
+
+#lwod-timestamps {
+	display: inline-grid;
+	grid-template-areas: 
+	"head-fixed" 
+	"body-scrollable";
+	table-layout: fixed;
+}
+
+#lwod-timestamps tbody{
+	grid-area: body-scrollable;
+	overflow: auto;
+	height: calc(100vh - 72px - 20px);
+}
+
+#lwod-timestamps td:last-child{
+	width: 100%;
+}
+
+.timestamp-entry {
+	color: #CCC;
+	cursor: pointer;
+}
+
+.timestamp-entry:hover {
+	color: white;
 }
 
 /* VOD Browser */

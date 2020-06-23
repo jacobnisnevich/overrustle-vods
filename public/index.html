@@ -27,6 +27,7 @@
 	<script src="js/chat.js"></script>
 	<script src="js/scripts.js"></script>
 	<script src="js/focus.js"></script>
+	<script src="js/lwod.js"></script>
 
 	<base target="_blank">
 </head>
@@ -46,6 +47,16 @@
 				<div class="date">${date}</div>
 			</div>
 		</div>
+	</script>
+
+	<script id="timestamp-tmpl" type="text/x-jquery-tmpl">
+		<tr starttime="${starttime}" class="timestamp-entry shadow">
+			<td>${starttime}</td>
+			<td>${endtime}</td>
+			<td>${game}</td>
+			<td>${subject}</td>
+			<td>${topic}</td>
+		</tr>
 	</script>
 
 	<script>
@@ -130,6 +141,7 @@
 		<div id="main-links">
 			<div id="header-title">OverRustle VODs</div>
 			<div id="changelog-button"><a>Changelog</a></div>
+			<div id="lwod-button"><a>LWOD</a></div>
 		</div>
 		<div id="header-links">
 			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch/Youtube link"></div>
@@ -181,6 +193,22 @@
 				2020-05-22: <br>
 				1. added the ability to watch youtube vods with chat (only works with stream recordings, regular videos won't work) <br>
 				2. added a loading screen for chat
+			</div>
+		</div>
+		<div id="lwod" class="view">
+			<div id="close-lwod-button"><span class="octicon octicon-x"></span></div>
+			<div id="table-container">
+				<table id="lwod-timestamps">
+					<tbody class="lwod-insert">
+						<tr>
+							<th>Start Time</th>
+							<th>End Time</th>
+							<th>Game</th>
+							<th>Subject</th>
+							<th>Topic</th>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		<div id="browse" class="view container">
