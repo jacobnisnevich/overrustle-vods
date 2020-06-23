@@ -237,11 +237,11 @@ var Chat = function(id, player, type, start, end) {
 
 				timeDifference = currentTimeOffset - self.actualPreviousTimeOffset;
 				
-				timestamps.push(self.recordedTime.clone().add(Number(self.delay.val()) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
+				timestamps.push(self.recordedTime.clone().add(-(Number(self.delay.val())) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
 
 				if (timeDifference > 1 && timeDifference < 30) {
 					for (let i = 1; i < timeDifference; i++) {
-						timestamps.push(timestamp = self.recordedTime.clone().add(Number(self.delay.val()) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
+						timestamps.push(timestamp = self.recordedTime.clone().add(-(Number(self.delay.val())) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
 					};
 				}
 
