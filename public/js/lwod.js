@@ -50,11 +50,10 @@ var LWOD = function(id, player) {
 			split2 = other[i].split(",");
 			other.forEach(element => {
 				split2 = element.split(",");
+				split3 = (i>0) ? other[i-1].split(",") : other[i].split(",");
 				string = "";
 				if (z == 0) {
 					string += split[0];
-				} else {
-					split3 = other[i-1].split(",");
 				}
 				if (moment.duration(split2[0]) > moment.duration(split[0]) && moment.duration(split2[0]) < moment.duration(split[1])) {
 					if (z > 0) {
