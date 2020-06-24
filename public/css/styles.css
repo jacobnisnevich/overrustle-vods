@@ -313,9 +313,8 @@ body {
 
 #delay-controls {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
-	width: 30%;
+	width: 50%;
 	height: -moz-calc(2%);
 	height: -webkit-calc(2%);
 	height: calc(2%);
@@ -323,6 +322,14 @@ body {
 	padding: 10px;
 	color: #EEEEEE;
 	background: #080808;
+}
+
+#dec-delay-button {
+	padding-right: 6px;
+}
+
+#inc-delay-button {
+	padding-left: 6px;
 }
 
 #delay-container {
