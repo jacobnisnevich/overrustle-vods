@@ -2,12 +2,16 @@ var globals = {};
 
 $(document).ready(function() {
     var id = getUrlParameter("id");
-    var v = getUrlParameter("v")
-    var time = getUrlParameter("t");
+    var v = getUrlParameter("v");
+    var chatonly = getUrlParameter("chatonly");
+    var time = (getUrlParameter("t")) ? getUrlParameter("t") : 0;
     var start = getUrlParameter("start");
     var end = getUrlParameter("end");
     var page = 1;
     var playerActive = 0;
+    var changelogActive = 0;
+    var lwodActive = 0;
+    var playerType = (id) ? "twitch" : (v) ? "youtube" : (chatonly) ? "chatonly" : null;
     globals.sizes = localStorage.getItem('split-sizes');
 
     if (globals.sizes) {
@@ -16,29 +20,13 @@ $(document).ready(function() {
         globals.sizes = [80, 20];
     }
 
-    if (id && time) {
-        loadPlayer(id, time, "twitch", start, end);
+    if (id || v || chatonly) {
+        var vidId = (playerType === "twitch") ? id : (playerType === "youtube") ? v : (playerType === "chatonly") ? "nothing" : null;
+        loadPlayer(vidId, time, playerType, start, end);
         $("#browse").hide();
         $("#player").show();
         $("#changelog").hide();
-        playerActive = 1;
-    } else if (id && !time) {
-        loadPlayer(id, 0, "twitch", start, end);
-        $("#browse").hide();
-        $("#player").show();
-        $("#changelog").hide();
-        playerActive = 1;
-    } else if (v && time) {
-        loadPlayer(v, time, "youtube", start, end);
-        $("#browse").hide();
-        $("#player").show();
-        $("#changelog").hide();
-        playerActive = 1;
-    } else if (v && !time) {
-        loadPlayer(v, 0, "youtube", start, end);
-        $("#browse").hide();
-        $("#player").show();
-        $("#changelog").hide();
+        $("#lwod").hide();
         playerActive = 1;
     } else {
         // preloading all vods since twitch api pagination is inconsistent and bad >:(
@@ -51,6 +39,7 @@ $(document).ready(function() {
         $("#player").hide();
         $("#browse").show();
         $("#changelog").hide();
+        $("#lwod").hide();
         playerActive = 0;
     }
 
@@ -65,9 +54,47 @@ $(document).ready(function() {
     });
 
     $("#changelog-button").click(function() {
-        $("#changelog").show();
-        $("#player").hide();
-        $("#browse").hide();
+        if (changelogActive === 0) {
+            $("#changelog").show();
+            $("#player").hide();
+            $("#browse").hide();
+            $("#lwod").hide();
+            changelogActive = 1
+        } else {
+            $("#changelog").hide();
+            changelogActive = 0
+            if (playerActive === 1) {
+                $("#player").show();
+                $("#browse").hide();
+                $("#lwod").hide();
+            } else {
+                $("#player").hide();
+                $("#browse").show();
+                $("#lwod").hide();
+            }
+        }
+    });
+
+    $("#lwod-button").click(function() {
+        if (lwodActive === 0) {
+            $("#lwod").show();
+            $("#changelog").hide();
+            $("#player").hide();
+            $("#browse").hide();
+            lwodActive = 1
+        } else {
+            $("#lwod").hide();
+            lwodActive = 0
+            if (playerActive === 1) {
+                $("#player").show();
+                $("#browse").hide();
+                $("#changelog").hide();
+            } else {
+                $("#player").hide();
+                $("#browse").show();
+                $("#changelog").hide();
+            }
+        }
     });
 
     $("#close-changelog-button").click(function() {
@@ -75,9 +102,24 @@ $(document).ready(function() {
         if (playerActive === 1) {
             $("#player").show();
             $("#browse").hide();
+            $("#lwod").hide();
         } else {
             $("#player").hide();
             $("#browse").show();
+            $("#lwod").hide();
+        }
+    });
+
+    $("#close-lwod-button").click(function() {
+        $("#lwod").hide();
+        if (playerActive === 1) {
+            $("#player").show();
+            $("#browse").hide();
+            $("#changelog").hide();
+        } else {
+            $("#player").hide();
+            $("#browse").show();
+            $("#changelog").hide();
         }
     });
 
@@ -227,6 +269,7 @@ var loadPlayer = function(id, time, type, start, end) {
     if (type === "twitch") {
         var player = new Twitch.Player("video-player", { video: id , time: time });
         var chat = new Chat(id, player, type, start, end);
+        var lwod = new LWOD(id, player);
         player.addEventListener(Twitch.Player.PLAYING, function() {
             chat.startChatStream();
         });
@@ -258,6 +301,9 @@ var loadPlayer = function(id, time, type, start, end) {
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    } else if (type === "chatonly") {
+        var chat = new Chat(id, player, type, start, end);
+        chat.startChatStream();
     }
 
     $("body").css("overflow", "hidden");
@@ -279,5 +325,21 @@ var createVodEntries = function(vodData) {
 
 var createVodEntry = function(vod) {
     $("#vod-tmpl").tmpl(vod).appendTo("#vod-list");
-}
+};
+
+var createLWODTimestamps = function(data) {
+    data.forEach(function(timestamp) {
+        createLWODEntry({
+            starttime: timestamp[0], 
+            endtime: timestamp[1], 
+            game: timestamp[2], 
+            subject: timestamp[3], 
+            topic: timestamp[4]
+        });
+    })
+};
+
+var createLWODEntry = function(timestamp) {
+    $("#timestamp-tmpl").tmpl(timestamp).appendTo(".lwod-insert");
+};
 

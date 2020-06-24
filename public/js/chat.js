@@ -1,5 +1,9 @@
 var Chat = function(id, player, type, start, end) {
-	this.videoId = id;
+	if (id === "nothing") {
+		this.videoId = "";
+	} else {
+		this.videoId = id;
+	}
 	this.status = "loading";
 	this.skipView = false;
 	this.videoPlayer = player;
@@ -16,21 +20,15 @@ var Chat = function(id, player, type, start, end) {
 	this.previousMessage = '';
 	this.comboCount = 1;
 
-	const cuteEmotes = ['ASLAN', 'AYAYA', 'Blubstiny', 'Cutestiny', 'DestiSenpaii', 'FeelsOkayMan', 
-	'FerretLOL', 'FrankerZ', 'Hhhehhehe', 'NOBULLY', 'OhMyDog', 'PepoTurkey',
-	'POTATO', 'Slugstiny', 'SoDoge', 'TeddyPepe', 'widepeepoHappy', 'WOOF',
-	'Wowee', 'YEE', 'YEEHAW', 'ComfyAYA', 'ComfyFerret', 'MiyanoHype',
-	'PepoComfy', 'ComfyDog', 'nathanAYAYA', 'nathanWeeb'];
+	this.chatonlyCounter = 0;
 
-	const memeMessages = ["<div class='emote YEE' title=YEE></div> neva lie, <div class='emote YEE' title=YEE></div> neva, <div class='emote YEE' title=YEE></div> neva lie.",
-						"Don't believe his lies.", "You could've played that better.", "Dishonorable PVP <div class='emote OverRustle' title=OverRustle></div>", 
-						"how do not have any cups in your apartment wtf",
-						"destiny before you have sex are you supposed to have a boner before the girl sees it?", 
-						"Well RightToBearArmsLOL, honestly, I think I might talk to Steven about your odd rhetoric.",
-						"BAR BAR BAR", "he handles my", "nukesys", "Did I shield in Lords Mobile?", "THE TIME FOR CHILLING HAS PASSED",
-						"OK HERES THE PLAN", "NO TEARS NOW, ONLY DREAMS", "How did I end up cleaning carpets? <div class='emote LeRuse' title=LeRuse></div>",
-						"B O D G A Y", "JIMMY NOOOO", "<div class='emote nathanTiny2' title=nathanTiny2></div>", ">more like", "Chat, don't woof.",
-						"Yeah, fuck off buddy we absolutely need more RNA duos.", "kids fuckin dirt nasty man", "Fuckin every time this kid steps in the battleground someone dies."];
+	const randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
+	const randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];
+	const loadingEmote = " <div class='emote " + randomEmote + "' title=" + randomEmote + "/>";
+
+	this.loadingMsg = "<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Loading logs!</span></div>"
+		+ "<div id='loading-message-2' class='chat-line'><span class='message'>Please wait " + loadingEmote + "</span></div>"
+		+ "<div id='loading-message-3' class='chat-line'><span class='message'>" + randomMessage + "</span></div></div>";
 
 	var self = this;
 
@@ -39,9 +37,11 @@ var Chat = function(id, player, type, start, end) {
 	// });
 
 	if (this.playerType === "twitch") {
-		infoUrl = "/vodinfo?id="
+		infoUrl = "/vodinfo?id=";
 	} else if (this.playerType === "youtube") {
-		infoUrl = "/vidinfo?id="
+		infoUrl = "/vidinfo?id=";
+	} else if (this.playerType === "chatonly") {
+		infoUrl = "/emotes"
 	}
 
 	$.get(infoUrl + this.videoId, function(vodData) {
@@ -60,15 +60,32 @@ var Chat = function(id, player, type, start, end) {
 				self.endTime = moment(self.recordedTime).add(self.duration, 'seconds').utc();
 			}
 		} else if (self.playerType === "youtube") {
+				if (self.timestampStart && self.timestampEnd) {
+					self.recordedTime = moment(self.timestampStart).utc();
+					self.endTime = moment(self.timestampEnd).utc();
+				} else {
+					if (data["items"][0]["liveStreamingDetails"]) {
+						self.recordedTime = moment(data["items"][0]["liveStreamingDetails"]["actualStartTime"]).utc();
+						self.endTime = moment(data["items"][0]["liveStreamingDetails"]["actualEndTime"]).utc();
+					} else {
+						self.loadingMsg = "<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Youtube error!</span></div>"
+							+ "<div id='loading-message-2' class='chat-line'><span class='message'>Looks like this video isn't a stream recording</span></div>"
+							+ "<div id='loading-message-3' class='chat-line'><span class='message'>Please input start and end timestamps using the button next to url input and try again " + loadingEmote + "</span></div></div>";
+					}
+				}
+		} else if (self.playerType === "chatonly") {
 			if (self.timestampStart && self.timestampEnd) {
 				self.recordedTime = moment(self.timestampStart).utc();
 				self.endTime = moment(self.timestampEnd).utc();
 			} else {
-				self.recordedTime = moment(data["items"][0]["liveStreamingDetails"]["actualStartTime"]).utc();
-				self.endTime = moment(data["items"][0]["liveStreamingDetails"]["actualEndTime"]).utc();
+				self.loadingMsg = "<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Chat error!</span></div>"
+					+ "<div id='loading-message-2' class='chat-line'><span class='message'>You shouldn't be here >:(</span></div>"
+					+ "<div id='loading-message-3' class='chat-line'><span class='message'>Please input start and end timestamps using the button next to url input and try again " + loadingEmote + "</span></div></div>";
 			}
 		}
 		
+		self.chatStream.append(self.loadingMsg);
+
 		self.difference = self.endTime.clone().startOf('day').diff(self.recordedTime.clone().startOf('day'), 'days');
 
 		var overrustleLogsDates = [];
@@ -90,14 +107,9 @@ var Chat = function(id, player, type, start, end) {
 			overrustleLogsDates.push(overrustleLogsStr);
 		}
 
-		var randomEmote = cuteEmotes[Math.floor(Math.random() * cuteEmotes.length)];
-		var randomMessage = memeMessages[Math.floor(Math.random() * memeMessages.length)];
-
-		loadingEmote = " <div class='emote " + randomEmote + "' title=" + randomEmote + "/>"
-
-		self.chatStream.append("<div id='loading-message'><div id='loading-message-1' class='chat-line'><span class='username loading-message'>Loading logs!</span></div>"
-		+ "<div id='loading-message-2' class='chat-line'><span class='message'>Please wait " + loadingEmote + "</span></div>"
-		+ "<div id='loading-message-3' class='chat-line'><span class='message'>" + randomMessage + "</span></div>" + "</div>");
+		$.get(featuresUrl, {}, function (data) {
+			self.features = data;
+		});
 
 		$.get("/chat", {
 			urls: JSON.stringify(overrustleLogsDates)
@@ -167,18 +179,30 @@ var Chat = function(id, player, type, start, end) {
 
 	this._renderChatMessage = function(time, username, message) {
 		var usernameField = "";
+		var featuresField = "";
 		var timeFormatted = "";
+		var featuresList = "";
 		if (time) {
 			timeFormatted = "<span class='time'>" + moment(time).utc().format("HH:mm") + " </span>";
 		}
+		if (username in self.features) {
+			let flairArray = self.features[username].slice(1,-1).split(",");
+			let flairList = "";
+			flairArray.forEach(function(flair) {
+				flair = flair.replace(/\s+/g, '').slice(1, -1);
+				featuresList += flair + " ";
+				flairList += "<i class='flair " + flair + "'></i>";
+			});
+			featuresField =  "<span class='features'>" + flairList + "</span>";
+		}
 		if (username) {
-			usernameField = `<span onclick='document._addFocusRule("${username}")' class='username user-${username}'>${username}</span>: `;
+			usernameField = `<span onclick='document._addFocusRule("${username}")' class='user-${username} user ${featuresList}'>${username}</span>: `;
 		}
 
 		self.chatStream.append("<div class='chat-line' data-username='" + username + "'>" + 
-			timeFormatted + usernameField + 
+			timeFormatted + featuresField + usernameField + 
 			"<span class='message' onclick='document._removeFocusRule()'>" +
-		  message + "</span></div>");		
+		  	message + "</span></div>");
 	}
 
 	this._generateDestinyEmoteImage = function(emote) {
@@ -212,17 +236,20 @@ var Chat = function(id, player, type, start, end) {
 		self.videoPlayer.addEventListener(Twitch.Player.PLAYING, function() {
 			self.actualPreviousTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
 		});
-	} else {
+	} else if (self.playerType == "youtube") {
 		self.videoPlayer.addEventListener('onStateChange', function(event) {
 			if (event.data == YT.PlayerState.PLAYING) {
 				self.actualPreviousTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
 			}
 		});
+	} else if (self.playerType == "chatonly") {
+		self.actualPreviousTimeOffset = 0
 	}
 
 	window.setInterval(function() {
+		self.chatonlyCounter += 0.5;
 		if (self.status == "running" && self.chat) {
-			var currentTimeOffset = Math.floor(self.videoPlayer.getCurrentTime());
+			var currentTimeOffset = (self.playerType === "chatonly") ? Math.floor(self.chatonlyCounter) : Math.floor(self.videoPlayer.getCurrentTime());
 			var utcFormat = [];
 			var timestamps = [];
 
@@ -230,11 +257,11 @@ var Chat = function(id, player, type, start, end) {
 
 				timeDifference = currentTimeOffset - self.actualPreviousTimeOffset;
 				
-				timestamps.push(self.recordedTime.clone().add(Number(self.delay.val()) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
+				timestamps.push(self.recordedTime.clone().add(-(Number(self.delay.val())) + currentTimeOffset, 's').format().replace("+00:00", "Z"));
 
 				if (timeDifference > 1 && timeDifference < 30) {
 					for (let i = 1; i < timeDifference; i++) {
-						timestamps.push(timestamp = self.recordedTime.clone().add(Number(self.delay.val()) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
+						timestamps.push(timestamp = self.recordedTime.clone().add(-(Number(self.delay.val())) + currentTimeOffset - i, 's').format().replace("+00:00", "Z"));
 					};
 				}
 

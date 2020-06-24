@@ -27,6 +27,7 @@
 	<script src="js/chat.js"></script>
 	<script src="js/scripts.js"></script>
 	<script src="js/focus.js"></script>
+	<script src="js/lwod.js"></script>
 
 	<base target="_blank">
 </head>
@@ -48,24 +49,46 @@
 		</div>
 	</script>
 
+	<script id="timestamp-tmpl" type="text/x-jquery-tmpl">
+		<tr starttime="${starttime}" class="timestamp-entry shadow">
+			<td>${starttime}</td>
+			<td>${endtime}</td>
+			<td>${game}</td>
+			<td>${subject}</td>
+			<td>${topic}</td>
+		</tr>
+	</script>
+
 	<script>
 		// detecting if url is yt or twitch
 		function vodURL(url) {
 			var urlCheck = /^((http[s]?|ftp):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/gm;
 			var matches = url.matchAll(urlCheck);
 			var matchArray = [...matches];
+			var startTimestamp = $("#start-timestamp").val();
+			var endTimestamp = $("#end-timestamp").val();
+			var timestamps = (startTimestamp != "" && endTimestamp != "") ? "&start=" + startTimestamp + "&end=" + endTimestamp : "";
 			if (matchArray[0][3] === "www.twitch.tv" || matchArray[0][3] === "twitch.tv") {
 				regex = new RegExp('(?=[0-9])[^\/]+', 'gm');
 				replaced = url.match(regex);
-				window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&');
+				window.location.href = window.location.origin + "?id=" + replaced[0].replace(/[?]/gm, '&') + timestamps;
 			}
 			if (matchArray[0][3] === "www.youtube.com" || matchArray[0][3] === "www.youtube.com") {
-				window.location.href = window.location.origin + matchArray[0][7];
+				window.location.href = window.location.origin + matchArray[0][7] + timestamps;
 			}
 			if (matchArray[0][3] === "youtu.be") {
-				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&');
+				window.location.href = window.location.origin + "?v=" + matchArray[0][6] + matchArray[0][7].replace(/[?]/gm, '&') + timestamps;
 			}
 		};
+
+		function onlyChat() {
+			var startTimestamp = $("#start-timestamp").val();
+			var endTimestamp = $("#end-timestamp").val();
+			var timestamps = (startTimestamp != "" && endTimestamp != "") ? "&start=" + startTimestamp + "&end=" + endTimestamp : "";
+			if (startTimestamp && endTimestamp) {
+				window.location.href = window.location.origin + '?chatonly=true' + timestamps;
+			}
+		}
 
 		// click button on "Enter" press
 		// stolen from https://stackoverflow.com/questions/155188/trigger-a-button-click-with-javascript-on-the-enter-key-in-a-text-box
@@ -81,6 +104,7 @@
 		$(document).ready(function () {
 			$("head").append("<style id='timeStyle'></style>");
 			$("head").append('<link rel="stylesheet" href="https://cdn.destiny.gg/emotes/emotes.css?_=' + Math.random() + '" type="text/css"/>');
+			$("head").append('<link rel="stylesheet" href="https://cdn.destiny.gg/flairs/flairs.css?_=' + Math.random() + '" type="text/css">');
 
 			if (localStorage.getItem('lineLimit')) {
         		$("#lineLimit").val(localStorage.getItem('lineLimit'));
@@ -98,26 +122,19 @@
 		});
 
 		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
+		function showManualTimestamps() {
+			document.getElementById("manual-content").classList.toggle("show");
+		};
+
+		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
 		function showSettings() {
 			document.getElementById("settings-content").classList.toggle("show");
 		};
 
-		$(document).on('click', 'settings-button-content', function (e) {
-			e.stopPropagation();
-		});
-
-		window.onclick = function(event) {
-  			if (!event.target.matches('#settings-button')) {
-    			var dropdowns = document.getElementsByClassName("settings-button-content");
-    			var i;
-    			for (i = 0; i < dropdowns.length; i++) {
-      				var openDropdown = dropdowns[i];
-      				if (openDropdown.classList.contains('show')) {
-        				openDropdown.classList.remove('show');
-      				}
-    			}
-  			}
-		}
+		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
+		function showSkipSettings() {
+			document.getElementById("skip-content").classList.toggle("show");
+		};
 
 		function updateLineLimit() {
 			localStorage.setItem('lineLimit', $("#lineLimit").val());
@@ -135,10 +152,23 @@
 	</script>
 
 	<div id="header" class="shadow">
-		<div id="header-title">OverRustle VODs</div>
-		<div id="header-links">
+		<div id="main-links">
+			<div id="header-title">OverRustle VODs</div>
 			<div id="changelog-button"><a>Changelog</a></div>
+			<div id="lwod-button"><a>LWOD</a></div>
+		</div>
+		<div id="header-links">
 			<div><input type="text" id="customUrlText" name="vodurl" placeholder="Twitch/Youtube link"></div>
+			<div class="manual-dropdown">
+				<div id="manual-button" class="manual-button" onclick="showManualTimestamps()"><span class="octicon octicon-chevron-down"></span></div>
+				<div id="manual-content" class="class-manual-content">
+					<label id="start-timestamp-text" for="lineLimit">Start chat at:</label>
+					<input type="text" id="start-timestamp" name="start-timestamp" placeholder="2020-01-01T12:34:56Z">
+					<label id="end-timestamp-text" for="lineLimit">End chat at:</label>
+					<input type="text" id="end-timestamp" name="end-timestamp" placeholder="2020-01-02T12:34:56Z">
+					<input id="chatonly" value="Chat Only" onclick="onlyChat()" type="button">
+				</div>
+			</div>
 			<div><input id="customUrlButton" value="Submit" onclick="vodURL(document.getElementById('customUrlText').value)" type="button"></div>
 			<div><a href="https://www.destiny.gg">Destiny.gg</a></div>
 			<div><a id="destiny-status" href="https://www.destiny.gg/bigscreen">Destiny is offline.</a></div>
@@ -153,6 +183,17 @@
 		<div id="changelog" class="view">
 			<div id="close-changelog-button"><span class="octicon octicon-x"></span></div>
 			<div id="changelog-text">
+				2020-06-24: <br>
+				1. added a game skipping feature !experimental <br>
+				2020-06-23: <br>
+				1. added flairs <br>
+				2. reversed delay <br>
+				3. LWOD integration <br>
+				4. chat only mode <br>
+				2020-06-22: <br>
+				1. button for custom timestamps <br>
+				2. added an error msg in case youtube vid isn't a stream recording <br>
+				3. moved some stuff around <br>
 				2020-06-20: <br>
 				1. custom start and end timestamps <br>
 				2. delay is now in a textbox <br>
@@ -168,9 +209,22 @@
 				1. converting special characters in messages to html now (some messages disappeared before) !im not sure this worked! <br>
 				2020-05-24: <br>
 				1. playback speed up to 2x should be synced with chat now (decreased setinterval delay, hopefully this doesn't cause any problems) <br>
-				2020-05-22: <br>
-				1. added the ability to watch youtube vods with chat (only works with stream recordings, regular videos won't work) <br>
-				2. added a loading screen for chat
+			</div>
+		</div>
+		<div id="lwod" class="view">
+			<div id="close-lwod-button"><span class="octicon octicon-x"></span></div>
+			<div id="table-container">
+				<table id="lwod-timestamps">
+					<tbody class="lwod-insert">
+						<tr>
+							<th>Start Time</th>
+							<th>End Time</th>
+							<th>Game</th>
+							<th>Subject</th>
+							<th>Topic</th>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		<div id="browse" class="view container">
@@ -191,6 +245,19 @@
 						<div id="inc-delay-button"><span class="octicon octicon-arrow-right"></span></div>
 					</div>
 					<div id="settings">
+						<div class="skip-dropdown">
+							<div id="skip-button" class="skip-button" onclick="showSkipSettings()"><span class="octicon octicon-history"></span></div>
+							<div id="skip-content" class="class-skip-content">
+								<label id="skip-text" for="lineLimit">Input game that you want to skip:</label>
+								<input type="text" id="skipGameText" name="skipGameText" placeholder="League PepeLaugh">
+								<div id="skip-buttons">
+									<input id="skipGameButton" value="Submit" type="button">
+									<input id="stopSkipGameButton" value="Stop" type="button">
+								</div>
+								<div id="time-msg"></div>
+								<div id="time-container"></div>
+							</div>
+						</div>
 						<div class="settings-dropdown">
 							<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
 							<div id="settings-content" class="class-settings-content">
