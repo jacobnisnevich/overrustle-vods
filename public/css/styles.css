@@ -333,11 +333,19 @@ body {
 	display: flex;
 }
 
-.settings-dropdown, .manual-dropdown {
+.settings-dropdown, .manual-dropdown, .skip-dropdown {
 	position: relative;
 	display: inline-block;
 	padding-right: 25%;
 	z-index: 9999;
+}
+
+#skip-button {
+	display: none;
+}
+
+#skip-buttons {
+	display: flex;
 }
 
 .manual-dropdown {
@@ -345,7 +353,7 @@ body {
 	margin-right: 0 !important;
 }
   
-.class-settings-content, .class-manual-content {
+.class-settings-content, .class-manual-content, .class-skip-content {
 	z-index: 9999;
 	display: none;
 	position: absolute;
@@ -363,13 +371,13 @@ body {
 	width: 28px;
 }
 
-#lineLimit-text, #showTime-text {
+#lineLimit-text, #showTime-text, #skip-text, .skip-timestamps {
 	font-size: 16px;
 }
 
 .show {display: block;}
 
-#dec-delay-button, #inc-delay-button, #switch-sides-button, #settings-button, #manual-button {
+#dec-delay-button, #inc-delay-button, #switch-sides-button, #settings-button, #manual-button, #skip-button {
 	cursor: pointer;
 }
 

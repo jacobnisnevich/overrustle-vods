@@ -131,6 +131,11 @@
 			document.getElementById("settings-content").classList.toggle("show");
 		};
 
+		// stolen from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown
+		function showSkipSettings() {
+			document.getElementById("skip-content").classList.toggle("show");
+		};
+
 		function updateLineLimit() {
 			localStorage.setItem('lineLimit', $("#lineLimit").val());
 		}
@@ -178,6 +183,8 @@
 		<div id="changelog" class="view">
 			<div id="close-changelog-button"><span class="octicon octicon-x"></span></div>
 			<div id="changelog-text">
+				2020-06-24: <br>
+				1. added a game skipping feature !experimental <br>
 				2020-06-23: <br>
 				1. added flairs <br>
 				2. reversed delay <br>
@@ -202,9 +209,6 @@
 				1. converting special characters in messages to html now (some messages disappeared before) !im not sure this worked! <br>
 				2020-05-24: <br>
 				1. playback speed up to 2x should be synced with chat now (decreased setinterval delay, hopefully this doesn't cause any problems) <br>
-				2020-05-22: <br>
-				1. added the ability to watch youtube vods with chat (only works with stream recordings, regular videos won't work) <br>
-				2. added a loading screen for chat
 			</div>
 		</div>
 		<div id="lwod" class="view">
@@ -241,6 +245,19 @@
 						<div id="inc-delay-button"><span class="octicon octicon-arrow-right"></span></div>
 					</div>
 					<div id="settings">
+						<div class="skip-dropdown">
+							<div id="skip-button" class="skip-button" onclick="showSkipSettings()"><span class="octicon octicon-history"></span></div>
+							<div id="skip-content" class="class-skip-content">
+								<label id="skip-text" for="lineLimit">Input game that you want to skip:</label>
+								<input type="text" id="skipGameText" name="skipGameText" placeholder="League PepeLaugh">
+								<div id="skip-buttons">
+									<input id="skipGameButton" value="Submit" type="button">
+									<input id="stopSkipGameButton" value="Stop" type="button">
+								</div>
+								<div id="time-msg"></div>
+								<div id="time-container"></div>
+							</div>
+						</div>
 						<div class="settings-dropdown">
 							<div id="settings-button" class="settings-button" onclick="showSettings()"><span class="octicon octicon-settings"></span></div>
 							<div id="settings-content" class="class-settings-content">
