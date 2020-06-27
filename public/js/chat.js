@@ -11,6 +11,7 @@ var Chat = function(id, player, type, start, end) {
 	this.playerType = type;
 	this.timestampStart = start;
 	this.timestampEnd = end;
+	this.features = [];
 
 	this.chatStream = $("#chat-stream");
 	this.lineLimit = $("#lineLimit");
