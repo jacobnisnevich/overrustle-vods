@@ -214,6 +214,7 @@
 		<div id="lwod" class="view">
 			<div id="close-lwod-button"><span class="octicon octicon-x"></span></div>
 			<div id="table-container">
+				<div id="scoot-credit">Source: <a href="https://drive.google.com/drive/folders/1aRv251i5bZIk223SDssmdvksKvrEYHdK">LWOD spreadsheets</a> (huge thanks to Scoot301!)</div>
 				<table id="lwod-timestamps">
 					<tbody class="lwod-insert">
 						<tr>
@@ -248,8 +249,8 @@
 						<div class="skip-dropdown">
 							<div id="skip-button" class="skip-button" onclick="showSkipSettings()"><span class="octicon octicon-history"></span></div>
 							<div id="skip-content" class="class-skip-content">
-								<label id="skip-text" for="lineLimit">Input game that you want to skip:</label>
-								<input type="text" id="skipGameText" name="skipGameText" placeholder="League PepeLaugh">
+								<label id="skip-text" for="lineLimit">Select the game that you want to skip:</label>
+								<select id="skipGameSelect"></select>
 								<div id="skip-buttons">
 									<input id="skipGameButton" value="Submit" type="button">
 									<input id="stopSkipGameButton" value="Stop" type="button">
