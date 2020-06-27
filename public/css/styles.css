@@ -363,6 +363,10 @@ body {
 	display: flex;
 }
 
+#skipGameSelect {
+	width: 140px;
+}
+
 .manual-dropdown {
 	padding-right: 0;
 	margin-right: 0 !important;

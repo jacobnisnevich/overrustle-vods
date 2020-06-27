@@ -9,6 +9,16 @@ var LWOD = function(id, player) {
 	}, function (data) {
 		self.data = data;
 		if (data != "") {
+			var uniqueGames = new Set();
+			$("#skipGameSelect").empty();
+			data.forEach(element => {
+				uniqueGames.add(element[2]);
+			});
+			uniqueGames.forEach(element => {
+				$('#skipGameSelect').append(`<option value="${element}"> 
+                                       ${element} 
+                                  </option>`);
+			});
 			$("#lwod-button").show();
 			$("#skip-button").show();
 			createLWODTimestamps(data);
@@ -92,7 +102,7 @@ var LWOD = function(id, player) {
 	});
 	
 	$("#skipGameButton").click(function() {
-		self.calculateSkips(self.data, $("#skipGameText").val());
+		self.calculateSkips(self.data, $("#skipGameSelect").val());
 	});
 
 	$("#stopSkipGameButton").click(function() {
