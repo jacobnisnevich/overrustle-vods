@@ -112,27 +112,13 @@ var Chat = function(id, player, type, start, end) {
 			self.features = data;
 		});
 
-		$.get("https://vyneer.me/tools/logs", {
-			from: self.recordedTime.clone().format("YYYY-MM-DD HH:mm:ss UTC"),
-			to: self.endTime.clone().format("YYYY-MM-DD HH:mm:ss UTC")
+		$.get("/chat", {
+			urls: JSON.stringify(overrustleLogsDates)
 		}, function(data) {
-			self.chat = data;
-			if (Object.keys(self.chat)[0] === null || Object.keys(self.chat)[0] === {} || Object.keys(self.chat)[0] === "" || Object.keys(self.chat)[0] === undefined) {
-				$.get("/chat", {
-					urls: JSON.stringify(overrustleLogsDates),
-					from: self.recordedTime.clone().format("YYYY-MM-DD HH:mm:ss UTC"),
-					to: self.endTime.clone().format("YYYY-MM-DD HH:mm:ss UTC")
-				}, function(data) {
-					self.chat = JSON.parse(data);
-					self.startChatStream();
-					$("#loading-message").remove();
-				});
-			} else {
-				self.startChatStream();
-				$("#loading-message").remove();
-			}
+			self.chat = JSON.parse(data);
+			self.startChatStream();
+			$("#loading-message").remove();
 		});
-
 	});
 
 	$.get("/emotes", function(data) {
